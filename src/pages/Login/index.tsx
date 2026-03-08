@@ -1,12 +1,16 @@
 import { Box, Card, CardBody, CardHeader, Text } from '@chakra-ui/react';
 import { Button, CtaFooter, Form, Input } from '@/components';
 import useLogin from '@/pages/Login/useLogin.ts';
+import ThemeSwitcher from '../../components/ThemeSwitcher';
 
 const Login = () => {
   const { control, handleSubmit, onSubmit, handleGoToSignUp } = useLogin();
 
   return (
     <>
+      <Box position="absolute" top={4} right={4}>
+        <ThemeSwitcher />
+      </Box>
       <Box as={'main'} height={'100vh'} display={'flex'} justifyContent={'center'} alignItems={'center'}>
         <Card w={'20%'} minWidth={'300px'}>
           <CardHeader>
@@ -19,7 +23,6 @@ const Login = () => {
               <Input type={'password'} label={'Senha'} control={control} name={'password'} />
 
               <Button sx={{ width: 250 }} colorScheme={'brand'} type="submit">Entrar</Button>
-
             </Form>
           </CardBody>
         </Card>

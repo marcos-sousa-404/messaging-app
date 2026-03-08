@@ -1,12 +1,16 @@
 import { Box, Card, CardBody, CardHeader, Text } from '@chakra-ui/react';
 import { Button, CtaFooter, Form, Input } from '@/components';
 import useSignUp from '@/pages/SignUp/useSignUp.ts';
+import ThemeSwitcher from '../../components/ThemeSwitcher';
 
 const SignUp = () => {
   const { control, handleSubmit, onSubmit, handleGoToLogin } = useSignUp();
 
   return (
     <>
+      <Box position="absolute" top={4} right={4}>
+        <ThemeSwitcher />
+      </Box>
       <Box as={'main'} height={'100vh'} display={'flex'} justifyContent={'center'} alignItems={'center'}>
         <Card w={'20%'} minWidth={'300px'}>
           <CardHeader>
@@ -21,7 +25,6 @@ const SignUp = () => {
               <Input type={'password'} label={'Repita sua senha'} control={control} name={'confirmPassword'} />
 
               <Button sx={{ width: 250 }} colorScheme={'brand'} type="submit">Cadastrar</Button>
-
             </Form>
           </CardBody>
         </Card>

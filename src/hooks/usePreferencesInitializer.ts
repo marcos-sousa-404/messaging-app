@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 import { useColorMode } from '@chakra-ui/react';
-import { useUserPreferencesStore } from '@/store/usePreferencesStore.ts';
+import { useUserPreferencesStore } from '@/store/useUserPreferencesStore.ts';
 
 const usePreferencesInitializer = () => {
   const { theme } = useUserPreferencesStore();
