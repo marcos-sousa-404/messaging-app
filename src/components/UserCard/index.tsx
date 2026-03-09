@@ -1,4 +1,4 @@
-import { Box, Text, Avatar, VStack } from '@chakra-ui/react';
+import { Card, CardBody, Text, Avatar, VStack, useColorModeValue, HStack } from '@chakra-ui/react';
 
 export interface UserCardProps {
   name: string;
@@ -6,27 +6,23 @@ export interface UserCardProps {
 }
 
 const UserCard = ({ name, email }: UserCardProps) => {
-  return (
-    <Box
-      display="flex"
-      alignItems="center"
-      gap={4}
-      p={4}
-      borderWidth="1px"
-      borderRadius="lg"
-      boxShadow="sm"
-      maxW="sm"
-      w="full"
-    >
-      <Avatar name={name} />
+  const bg = useColorModeValue('white', 'gray.800');
+  const emailColor = useColorModeValue('gray.500', 'gray.400');
 
-      <VStack align="start" spacing={0}>
-        <Text fontWeight="bold">{name}</Text>
-        <Text fontSize="sm" color="gray.500">
-          {email}
-        </Text>
-      </VStack>
-    </Box>
+  return (
+    <Card maxW="sm" w="full" bg={bg} boxShadow="sm">
+      <CardBody>
+        <HStack spacing={4} align="center">
+          <Avatar name={name} />
+          <VStack align="start" spacing={0}>
+            <Text fontWeight="bold">{name}</Text>
+            <Text fontSize="sm" color={emailColor}>
+              {email}
+            </Text>
+          </VStack>
+        </HStack>
+      </CardBody>
+    </Card>
   );
 };
 
