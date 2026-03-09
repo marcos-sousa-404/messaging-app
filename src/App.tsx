@@ -2,7 +2,7 @@ import { ChakraProvider, ColorModeScript } from '@chakra-ui/react';
 import Router from '@/router';
 import theme from '@/theme';
 import '@fontsource/montserrat';
-import { QueryClient, QueryClientProvider } from 'react-query';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
 const queryClient = new QueryClient();
 

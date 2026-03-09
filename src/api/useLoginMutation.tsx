@@ -1,5 +1,5 @@
 import getApi from '@/api/getApi.ts';
-import { useMutation } from 'react-query';
+import { useMutation } from '@tanstack/react-query';
 import useToast from '@/hooks/useToast.tsx';
 
 const login = async (payload: LoginPayload) => {
