@@ -1,5 +1,5 @@
-import { Box, Stack } from "@chakra-ui/react";
-import { Button, ThemeSwitcher, UserCard } from '@/components';
+import { Stack } from "@chakra-ui/react";
+import { Button, ThemeSwitcher } from '@/components';
 import useLogout from "@/hooks/useLogout";
 
 const Header = () => {

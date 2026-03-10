@@ -17,6 +17,4 @@ const useChats = () => {
 
 export default useChats;
 
-export interface ChatsData {
-  chats: Chat[]
-}
+export type ChatsData = Chat[]
