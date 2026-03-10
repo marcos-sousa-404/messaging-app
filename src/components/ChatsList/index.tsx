@@ -26,7 +26,8 @@ const ChatsList = ({
   createChat,
   chatCreationInProgress
 }: ChatsListProps) => {
-  const { userId } = useAuthStore();
+  const { user } = useAuthStore();
+  const userId = user?._id;
   const loading = isCreatingChat ? usersLoading : chatsLoading;
 
   return (

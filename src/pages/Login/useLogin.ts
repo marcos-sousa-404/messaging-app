@@ -15,7 +15,7 @@ const useLogin = () => {
     },
   });
   const { mutateAsync: login, isPending } = useLoginMutation();
-  const { setToken, setUserId } = useAuthStore();
+  const { setToken, setUser } = useAuthStore();
 
   const navigate = useNavigate();
 
@@ -25,10 +25,10 @@ const useLogin = () => {
 
   const onSubmit = (data: LoginFormData) => {
     login(data).then((response) => {
-      const { token, userId } = response.data;
+      const { token, user } = response.data;
 
       setToken(token);
-      setUserId(userId);
+      setUser(user);
       navigate('/chat');
     });
   };

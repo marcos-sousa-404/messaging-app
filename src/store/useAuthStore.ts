@@ -1,12 +1,13 @@
 import { persist } from 'zustand/middleware';
 import { createStore } from 'zustand/vanilla';
 import { useStore } from 'zustand/react';
+import type { User } from '@/types/User';
 
 interface AuthStore {
     token: string | null;
     setToken: (token: string | null) => void;
-    userId: string | null;
-    setUserId: (userId: string | null) => void;
+    user: User | null;
+    setUser: (user: User | null) => void;
 }
 
 export const authStore = createStore<AuthStore>()(
@@ -14,8 +15,8 @@ export const authStore = createStore<AuthStore>()(
         (set) => ({
             token: null,
             setToken: (token: AuthStore['token']) => set({ token }),
-            userId: null,
-            setUserId: (userId: AuthStore['userId']) => set({ userId }),
+            user: null,
+            setUser: (user: AuthStore['user']) => set({ user }),
         }),
         { name: 'auth' },
     ),
