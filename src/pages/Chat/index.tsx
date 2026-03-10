@@ -1,70 +1,25 @@
-import useLogout from '@/hooks/useLogout.ts';
-import { Button, ThemeSwitcher, UserCard } from '@/components';
-import useUsers from '@/api/queries/useUsers';
+import { ChatCard, Header } from '@/components';
 
 import {
   Box,
-  Text,
-  VStack,
-  Spinner,
-  Heading,
   Divider,
-  HStack,
-  Card,
-  useColorModeValue,
 } from '@chakra-ui/react';
-import type { User } from '@/types/User';
+import useChat from './useChat';
 
 const Chat = () => {
-  const { logout } = useLogout();
-  const { data: usersData, isLoading: usersLoading } = useUsers();
-  const users = usersData?.data?.users ?? [];
-
-  // Color mode aware values
-  const cardBg = useColorModeValue('white', 'gray.800');
-  const headingColor = useColorModeValue('gray.800', 'whiteAlpha.900');
-  const loadingTextColor = useColorModeValue('gray.500', 'gray.400');
+  const { users = [], usersLoading } = useChat();
 
   return (
-    <Box
-      w="100%"
-      h="100vh"
-      display="flex"
-      justifyContent="center"
-      alignItems="center"
-      p={6}
-      bg={useColorModeValue('gray.50', 'gray.900')} // optional page background
-    >
-      <Box position="absolute" top={4} right={4}>
-        <ThemeSwitcher />
+    <Box>
+      <Header />
+      <Box as={'main'} height={'calc(100vh - 4rem)'} display={'flex'}>
+        <Box sx={{ width: '270px', height: '100%', boxShadow: '4px 0px 8px rgba(0, 0, 0, 0.1)' }}>
+          {users.map((chat) => <Box>
+            <ChatCard lastMessage='' name={chat.name} avatarUrl='' unreadCount={0} />
+            <Divider />
+          </Box>)}
+        </Box>
       </Box>
-
-      <Card w="full" maxW="500px" borderRadius="xl" boxShadow="lg" p={6} bg={cardBg}>
-        <HStack justify="space-between" mb={4}>
-          <Heading size="md" color={headingColor}>
-            Usuários
-          </Heading>
-
-          <Button onClick={logout} colorScheme="brand" size="sm">
-            Sair
-          </Button>
-        </HStack>
-
-        <Divider mb={4} />
-
-        {usersLoading ? (
-          <VStack py={10}>
-            <Spinner size="lg" />
-            <Text color={loadingTextColor}>Usuários estão carregando...</Text>
-          </VStack>
-        ) : (
-          <VStack spacing={3} align="stretch" maxH="400px" overflowY="auto">
-            {users.map((user: User) => (
-              <UserCard key={user._id} name={user.name} email={user.email} />
-            ))}
-          </VStack>
-        )}
-      </Card>
     </Box>
   );
 };

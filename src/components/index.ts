@@ -5,3 +5,5 @@ export { default as Footer } from './Footer/index.tsx';
 export { default as CtaFooter } from './CtaFooter/index.tsx';
 export { default as ThemeSwitcher } from './ThemeSwitcher/index.tsx';
 export { default as UserCard } from './UserCard/index.tsx';
+export { default as Header } from './Header/index.tsx';
+export { default as ChatCard } from './ChatCard/index.tsx';
