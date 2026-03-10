@@ -1,24 +1,37 @@
-import { ChatCard, Header } from '@/components';
-
-import {
-  Box,
-  Divider,
-} from '@chakra-ui/react';
+// pages/Chat/index.tsx
+import { Header } from '@/components';
+import ChatsList from '@/components/ChatsList';
+import { Box } from '@chakra-ui/react';
 import useChat from './useChat';
 
 const Chat = () => {
-  const { users = [], usersLoading } = useChat();
+  const {
+    users = [],
+    usersLoading,
+    startCreatingChat,
+    stopCreatingChat,
+    isCreatingChat,
+    chats,
+    chatsLoading,
+    createChat,
+    chatCreationInProgress
+  } = useChat();
 
   return (
     <Box>
       <Header />
       <Box as={'main'} height={'calc(100vh - 4rem)'} display={'flex'}>
-        <Box sx={{ width: '270px', height: '100%', boxShadow: '4px 0px 8px rgba(0, 0, 0, 0.1)' }}>
-          {users.map((chat) => <Box>
-            <ChatCard lastMessage='' name={chat.name} avatarUrl='' unreadCount={0} />
-            <Divider />
-          </Box>)}
-        </Box>
+        <ChatsList
+        createChat={createChat}
+          stopCreatingChat={stopCreatingChat}
+          chats={chats}
+          chatCreationInProgress={chatCreationInProgress}
+          users={users}
+          chatsLoading={chatsLoading}
+          usersLoading={usersLoading}
+          isCreatingChat={isCreatingChat}
+          startCreatingChat={startCreatingChat}
+        />
       </Box>
     </Box>
   );
