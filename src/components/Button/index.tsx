@@ -2,7 +2,7 @@ import { Button as ButtonBase, type ButtonProps as ButtonPropsBase } from '@chak
 import useDarkMode from '@/hooks/useDarkMode.ts';
 
 const Button = (props: ButtonProps) => {
-  const {variant = 'solid'} = props;
+  const { variant = 'solid', loadingText, ...rest } = props;
   let backgroundColor = props.backgroundColor;
   let color = props.color;
 
@@ -13,7 +13,15 @@ const Button = (props: ButtonProps) => {
     color = 'white';
   }
 
-  return <ButtonBase {...props} backgroundColor={backgroundColor} color={color} />;
+  return (
+    <ButtonBase
+      {...rest}
+      backgroundColor={backgroundColor}
+      color={color}
+      spinnerPlacement="start"
+      loadingText={loadingText}
+    />
+  );
 };
 
 export default Button;

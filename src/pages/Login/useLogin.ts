@@ -14,7 +14,7 @@ const useLogin = () => {
       password: '',
     },
   });
-  const { mutateAsync: login } = useLoginMutation();
+  const { mutateAsync: login, isPending } = useLoginMutation();
   const { setToken } = useAuthStore();
 
   const navigate = useNavigate();
@@ -32,7 +32,7 @@ const useLogin = () => {
     });
   };
 
-  return { control, handleSubmit, onSubmit, handleGoToSignUp };
+  return { control, handleSubmit, onSubmit, handleGoToSignUp, isLoggingIn: isPending };
 };
 
 export default useLogin;

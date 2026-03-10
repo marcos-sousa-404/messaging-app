@@ -16,7 +16,7 @@ const useSignUp = () => {
     },
   });
 
-  const { mutateAsync: signUp } = useSignUpMutation();
+  const { mutateAsync: signUp, isPending } = useSignUpMutation();
 
   const navigate = useNavigate();
 
@@ -32,7 +32,7 @@ const useSignUp = () => {
     });
   };
 
-  return { control, handleSubmit, onSubmit, handleGoToLogin };
+  return { control, handleSubmit, onSubmit, handleGoToLogin, isSigningIn: isPending };
 };
 
 export default useSignUp;

@@ -4,7 +4,7 @@ import useLogin from '@/pages/Login/useLogin.ts';
 import ThemeSwitcher from '../../components/ThemeSwitcher';
 
 const Login = () => {
-  const { control, handleSubmit, onSubmit, handleGoToSignUp } = useLogin();
+  const { control, handleSubmit, onSubmit, handleGoToSignUp, isLoggingIn } = useLogin();
 
   return (
     <>
@@ -22,7 +22,7 @@ const Login = () => {
               <Input label={'E-mail'} control={control} name={'email'} />
               <Input type={'password'} label={'Senha'} control={control} name={'password'} />
 
-              <Button sx={{ width: 250 }} colorScheme={'brand'} type="submit">Entrar</Button>
+              <Button isLoading={isLoggingIn} loadingText='Entrando...' sx={{ width: 250 }} colorScheme={'brand'} type="submit">Entrar</Button>
             </Form>
           </CardBody>
         </Card>

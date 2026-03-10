@@ -4,7 +4,7 @@ import useSignUp from '@/pages/SignUp/useSignUp.ts';
 import ThemeSwitcher from '../../components/ThemeSwitcher';
 
 const SignUp = () => {
-  const { control, handleSubmit, onSubmit, handleGoToLogin } = useSignUp();
+  const { control, handleSubmit, onSubmit, handleGoToLogin, isSigningIn } = useSignUp();
 
   return (
     <>
@@ -24,7 +24,7 @@ const SignUp = () => {
               <Input type={'password'} label={'Senha'} control={control} name={'password'} />
               <Input type={'password'} label={'Repita sua senha'} control={control} name={'confirmPassword'} />
 
-              <Button sx={{ width: 250 }} colorScheme={'brand'} type="submit">Cadastrar</Button>
+              <Button isLoading={isSigningIn} loadingText='Cadastrando...' sx={{ width: 250 }} colorScheme={'brand'} type="submit">Cadastrar</Button>
             </Form>
           </CardBody>
         </Card>
