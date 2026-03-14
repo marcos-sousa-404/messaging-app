@@ -1,6 +1,7 @@
 import getApi from '@/api/getApi.ts';
 import { useMutation } from '@tanstack/react-query';
 import useToast from '@/hooks/useToast.tsx';
+import type { ApiError } from '@/types/ApiError.ts';
 
 const createChat = async (payload: CreateChatPayload) => {
   const api = getApi();
@@ -20,7 +21,7 @@ const useCreateChatMutation = () => {
         status: 'success',
       });
     },
-    onError: (error: any) => {
+    onError: (error: ApiError) => {
       showToast({
         title: 'Erro ao criar conversa',
         description: error.response?.data?.message || 'Não foi possível iniciar a conversa.',

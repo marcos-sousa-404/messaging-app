@@ -1,7 +1,7 @@
-import { Theme } from '@chakra-ui/react';
+import '@chakra-ui/react';
 
 declare module '@chakra-ui/react' {
-  interface Theme {
+  export interface Theme {
     breakpoints: {
       base: string;
       sm: string;

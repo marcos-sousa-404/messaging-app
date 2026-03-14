@@ -32,4 +32,4 @@ const Button = (props: ButtonProps) => {
 
 export default Button;
 
-export interface ButtonProps extends ButtonPropsBase {}
+export type ButtonProps = ButtonPropsBase;

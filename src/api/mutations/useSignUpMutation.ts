@@ -1,6 +1,7 @@
 import getApi from '@/api/getApi.ts';
 import { useMutation } from '@tanstack/react-query';
 import useToast from '@/hooks/useToast.tsx';
+import type { ApiError } from '@/types/ApiError.ts';
 
 const signUp = async (payload: SignUpPayload) => {
   const api = getApi();
@@ -20,7 +21,7 @@ const useSignUpMutation = () => {
         status: 'success',
       });
     },
-    onError: (error: any) => {
+    onError: (error: ApiError) => {
       showToast({
         title: 'Erro ao fazer seu cadastro',
         description: error.response?.data?.message || 'Por favor, verifique suas informações.',

@@ -36,5 +36,3 @@ const Header = () => {
 };
 
 export default Header;
-
-export interface HeaderProps {}

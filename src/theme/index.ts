@@ -1,6 +1,7 @@
 import { extendTheme, type ThemeConfig } from '@chakra-ui/react';
 import '@fontsource-variable/montserrat';
 import { mode } from '@chakra-ui/theme-tools';
+import type { StyleFunctionProps } from '@chakra-ui/icons';
 
 export const colors = {
   brand: {
@@ -42,8 +43,6 @@ export const colors = {
   },
 };
 
-export const getBreakpoints = (theme: any) => theme.breakpoints;
-
 export const gradients = {
   primary: {
     light: 'linear-gradient(90deg, #3b82f6, #2563eb)',
@@ -57,7 +56,8 @@ const fonts = {
 };
 
 const styles = {
-  global: (props: any) => ({
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  global: (props: Record<string, any> | StyleFunctionProps) => ({
     '::selection': {
       background: mode('brand.500', 'brand.600')(props),
       color: 'white',
