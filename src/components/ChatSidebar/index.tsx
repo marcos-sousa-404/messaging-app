@@ -7,6 +7,7 @@ import {
   DrawerHeader,
   DrawerOverlay,
   Show,
+  useColorModeValue,
 } from '@chakra-ui/react';
 import ChatsList, { type ChatsListProps } from '../ChatsList';
 import { useChatStore } from '@/store';
@@ -14,6 +15,8 @@ import { useChatStore } from '@/store';
 const ChatSidebar = (props: ChatsListProps) => {
   const { chatsDrawerOpen, setChatsDrawerOpen } = useChatStore();
   const onClose = () => setChatsDrawerOpen(false);
+  const borderColor = useColorModeValue('gray.200', 'gray.700');
+  const drawerBackgroundColor = useColorModeValue('white', 'gray.800');
 
   return (
     <>
@@ -21,7 +24,7 @@ const ChatSidebar = (props: ChatsListProps) => {
         <Box
           w="350px"
           borderRight="1px solid"
-          borderColor="gray.200"
+          borderColor={borderColor}
           boxShadow="4px 0px 8px rgba(0, 0, 0, 0.05)"
         >
           <ChatsList {...props} />
@@ -31,7 +34,7 @@ const ChatSidebar = (props: ChatsListProps) => {
       <Show breakpoint="(max-width: 767px)">
         <Drawer isOpen={chatsDrawerOpen} placement="left" onClose={onClose} size="xs">
           <DrawerOverlay />
-          <DrawerContent>
+          <DrawerContent bg={drawerBackgroundColor}>
             <DrawerCloseButton />
             <DrawerHeader borderBottomWidth="1px">Minhas conversas</DrawerHeader>
             <DrawerBody p={0}>

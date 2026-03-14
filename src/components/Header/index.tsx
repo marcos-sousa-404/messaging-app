@@ -1,4 +1,12 @@
-import { Avatar, HStack, IconButton, Show, Stack, Text } from '@chakra-ui/react';
+import {
+  Avatar,
+  HStack,
+  IconButton,
+  Show,
+  Stack,
+  Text,
+  useBreakpointValue,
+} from '@chakra-ui/react';
 import { Button, ThemeSwitcher } from '@/components';
 import useLogout from '@/hooks/useLogout';
 import useAuthStore from '@/store/useAuthStore';
@@ -8,9 +16,12 @@ import { useChatStore } from '@/store';
 const Header = () => {
   const { logout } = useLogout();
   const { user } = useAuthStore();
-  const { setChatsDrawerOpen } = useChatStore();
+  const { setChatsDrawerOpen, otherUser } = useChatStore();
 
   const openMobileDrawer = () => setChatsDrawerOpen(true);
+  const isMobile = useBreakpointValue({ base: true, md: false });
+
+  const userDataToUse = isMobile ? otherUser : user;
 
   return (
     <Stack
@@ -20,7 +31,6 @@ const Header = () => {
         width: '100%',
         height: '4rem',
         alignItems: 'center',
-        justifyContent: 'space-between',
         paddingX: 6,
         flexDir: 'row',
       }}
@@ -33,12 +43,14 @@ const Header = () => {
           variant={'ghost'}
         />
       </Show>
-      <HStack spacing={3}>
-        <Avatar name={user?.name} size="sm" />
-        <Text fontWeight="semibold">{user?.name}</Text>
-      </HStack>
+      {userDataToUse && (
+        <HStack spacing={3}>
+          <Avatar name={userDataToUse?.name} size="sm" />
+          <Text fontWeight="semibold">{userDataToUse?.name}</Text>
+        </HStack>
+      )}
 
-      <HStack spacing={3}>
+      <HStack ml={'auto'} spacing={3}>
         <Button onClick={logout} colorScheme="brand" size="sm">
           Sair da conta
         </Button>
