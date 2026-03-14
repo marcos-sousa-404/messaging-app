@@ -11,24 +11,49 @@ const SignUp = () => {
       <Box position="absolute" top={4} right={4}>
         <ThemeSwitcher />
       </Box>
-      <Box as={'main'} height={'100vh'} display={'flex'} justifyContent={'center'} alignItems={'center'}>
+      <Box
+        as={'main'}
+        height={'100vh'}
+        display={'flex'}
+        justifyContent={'center'}
+        alignItems={'center'}
+      >
         <Card w={'20%'} minWidth={'300px'}>
           <CardHeader>
-            <Text fontSize={'2xl'} fontWeight={700}>Junte-se a nós!</Text>
+            <Text fontSize={'2xl'} fontWeight={700}>
+              Junte-se a nós!
+            </Text>
           </CardHeader>
           <CardBody>
-            <Form display={'flex'} flexDir={'column'} gap={4} alignItems={'center'} onSubmit={handleSubmit(onSubmit)}>
-
+            <Form
+              display={'flex'}
+              flexDir={'column'}
+              gap={4}
+              alignItems={'center'}
+              onSubmit={handleSubmit(onSubmit)}
+            >
               <Input label={'Nome de usuário'} control={control} name={'name'} />
               <Input label={'E-mail'} control={control} name={'email'} />
               <Input type={'password'} label={'Senha'} control={control} name={'password'} />
-              <Input type={'password'} label={'Repita sua senha'} control={control} name={'confirmPassword'} />
+              <Input
+                type={'password'}
+                label={'Repita sua senha'}
+                control={control}
+                name={'confirmPassword'}
+              />
 
-              <Button isLoading={isSigningIn} loadingText='Cadastrando...' sx={{ width: 250 }} colorScheme={'brand'} type="submit">Cadastrar</Button>
+              <Button
+                isLoading={isSigningIn}
+                loadingText="Cadastrando..."
+                sx={{ width: 250 }}
+                colorScheme={'brand'}
+                type="submit"
+              >
+                Cadastrar
+              </Button>
             </Form>
           </CardBody>
         </Card>
-
       </Box>
       <CtaFooter
         promptText="Já tem uma conta?"

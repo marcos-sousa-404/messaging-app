@@ -17,4 +17,6 @@ const userPreferencesStore = createStore<UserPreferencesStore>()(
   ),
 );
 
-export const useUserPreferencesStore = () => useStore(userPreferencesStore);
+const useUserPreferencesStore = () => useStore(userPreferencesStore);
+
+export default useUserPreferencesStore;

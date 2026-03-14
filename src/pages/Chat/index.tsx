@@ -1,6 +1,4 @@
-// pages/Chat/index.tsx
-import { Header } from '@/components';
-import ChatsList from '@/components/ChatsList';
+import { ChatsList, ChatView, Header } from '@/components';
 import { Box } from '@chakra-ui/react';
 import useChat from './useChat';
 
@@ -14,7 +12,10 @@ const Chat = () => {
     chats,
     chatsLoading,
     createChat,
-    chatCreationInProgress
+    chatCreationInProgress,
+    selectedChat,
+    onMessageInputTextChange,
+    messageInputText,
   } = useChat();
 
   return (
@@ -22,7 +23,7 @@ const Chat = () => {
       <Header />
       <Box as={'main'} height={'calc(100vh - 4rem)'} display={'flex'}>
         <ChatsList
-        createChat={createChat}
+          createChat={createChat}
           stopCreatingChat={stopCreatingChat}
           chats={chats}
           chatCreationInProgress={chatCreationInProgress}
@@ -31,6 +32,11 @@ const Chat = () => {
           usersLoading={usersLoading}
           isCreatingChat={isCreatingChat}
           startCreatingChat={startCreatingChat}
+        />
+        <ChatView
+          selectedChat={selectedChat}
+          onMessageInputTextChange={onMessageInputTextChange}
+          messageInputText={messageInputText}
         />
       </Box>
     </Box>

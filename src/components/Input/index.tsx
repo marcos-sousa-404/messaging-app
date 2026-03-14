@@ -5,19 +5,9 @@ import {
   FormLabel,
   type InputProps as InputPropsBase,
 } from '@chakra-ui/react';
-import {
-  Controller,
-  type Control,
-  type FieldValues,
-  type Path,
-} from 'react-hook-form';
+import { Controller, type Control, type FieldValues, type Path } from 'react-hook-form';
 
-function Input<T extends FieldValues>({
-                                        name,
-                                        control,
-                                        label,
-                                        ...props
-                                      }: InputProps<T>) {
+function Input<T extends FieldValues>({ name, control, label, ...props }: InputProps<T>) {
   return (
     <Controller
       name={name}
@@ -28,9 +18,7 @@ function Input<T extends FieldValues>({
 
           <InputBase {...props} {...field} />
 
-          <FormErrorMessage>
-            {fieldState.error?.message}
-          </FormErrorMessage>
+          <FormErrorMessage>{fieldState.error?.message}</FormErrorMessage>
         </FormControl>
       )}
     />

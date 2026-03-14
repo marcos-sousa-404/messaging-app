@@ -1,7 +1,7 @@
-import type { User } from "./User";
+import type { User } from './User';
 
 export interface Chat {
-    _id: string;
-    participants: User[];
-    hasUnreadMessages: boolean;
-}   
+  _id: string;
+  participants: User[];
+  hasUnreadMessages: boolean;
+}

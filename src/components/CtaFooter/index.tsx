@@ -2,12 +2,8 @@ import { Button, Text } from '@chakra-ui/react';
 import Footer from '@/components/Footer';
 import useDarkMode from '@/hooks/useDarkMode.ts';
 
-const CtaFooter = ({
-                     actionText,
-                     actionHandler,
-                     promptText,
-                   }: CtaFooterProps) => {
-  const {isDarkMode} = useDarkMode();
+const CtaFooter = ({ actionText, actionHandler, promptText }: CtaFooterProps) => {
+  const { isDarkMode } = useDarkMode();
 
   return (
     <Footer>
@@ -21,6 +17,9 @@ const CtaFooter = ({
         >
           {actionText}
         </Button>
+      </Text>
+      <Text fontSize="md" color="gray.500">
+        ChatZon - Versão {__APP_VERSION__}
       </Text>
     </Footer>
   );

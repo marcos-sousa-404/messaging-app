@@ -6,7 +6,7 @@ const login = async (payload: LoginPayload) => {
   const api = getApi();
 
   return api.post('/auth/login', payload);
-}
+};
 
 const useLoginMutation = () => {
   const showToast = useToast();
@@ -26,13 +26,13 @@ const useLoginMutation = () => {
         description: error.response?.data?.message || 'Por favor, verifique suas informações.',
         status: 'error',
       });
-    }
+    },
   });
-}
+};
 
 export default useLoginMutation;
 
 type LoginPayload = {
   email: string;
   password: string;
-}
+};

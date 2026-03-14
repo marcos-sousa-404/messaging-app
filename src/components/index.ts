@@ -8,3 +8,4 @@ export { default as UserCard } from './UserCard/index.tsx';
 export { default as Header } from './Header/index.tsx';
 export { default as ChatCard } from './ChatCard/index.tsx';
 export { default as ChatsList } from './ChatsList/index.tsx';
+export { default as ChatView } from './ChatView/index.tsx';

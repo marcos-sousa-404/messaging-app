@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 import { useColorMode } from '@chakra-ui/react';
-import { useUserPreferencesStore } from '@/store/useUserPreferencesStore.ts';
+import useUserPreferencesStore from '@/store/useUserPreferencesStore.ts';
 
 const usePreferencesInitializer = () => {
   const { theme } = useUserPreferencesStore();
@@ -13,7 +13,6 @@ const usePreferencesInitializer = () => {
       const systemDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
       setColorMode(systemDark ? 'dark' : 'light');
     }
-
   }, [theme, setColorMode]);
 };
 

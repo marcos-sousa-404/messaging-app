@@ -38,11 +38,23 @@ const useSignUp = () => {
 export default useSignUp;
 
 const validationSchema = yup.object({
-  name: yup.string().trim().min(3, 'O nome de usuário precisa ter ao menos 3 caracteres').max(50, 'O nome de usuário deve ter no máximo 50 caracteres').required('Nome de usuário é obrigatório'),
+  name: yup
+    .string()
+    .trim()
+    .min(3, 'O nome de usuário precisa ter ao menos 3 caracteres')
+    .max(50, 'O nome de usuário deve ter no máximo 50 caracteres')
+    .required('Nome de usuário é obrigatório'),
   email: yup.string().trim().email('E-mail inválido').required('E-mail é obrigatório'),
-  password: yup.string().trim().min(8, 'A senha precisa ter ao menos 8 caracteres').required('A senha é obrigatória'),
-  confirmPassword: yup.string().trim().test('passwords-match', 'As senhas devem ser iguais', function(value) {
-    return value === this.parent.password;
-  })
+  password: yup
+    .string()
+    .trim()
+    .min(8, 'A senha precisa ter ao menos 8 caracteres')
+    .required('A senha é obrigatória'),
+  confirmPassword: yup
+    .string()
+    .trim()
+    .test('passwords-match', 'As senhas devem ser iguais', function (value) {
+      return value === this.parent.password;
+    })
     .required('A confirmação de senha é obrigatória'),
 });

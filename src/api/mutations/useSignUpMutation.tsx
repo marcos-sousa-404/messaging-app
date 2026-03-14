@@ -6,7 +6,7 @@ const signUp = async (payload: SignUpPayload) => {
   const api = getApi();
 
   return api.post('/auth/register', payload);
-}
+};
 
 const useSignUpMutation = () => {
   const showToast = useToast();
@@ -26,9 +26,9 @@ const useSignUpMutation = () => {
         description: error.response?.data?.message || 'Por favor, verifique suas informações.',
         status: 'error',
       });
-    }
+    },
   });
-}
+};
 
 export default useSignUpMutation;
 
@@ -36,4 +36,4 @@ type SignUpPayload = {
   name: string;
   email: string;
   password: string;
-}
+};

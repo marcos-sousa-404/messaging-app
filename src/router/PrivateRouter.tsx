@@ -5,7 +5,7 @@ const PrivateRouter = () => {
   return (
     <BrowserRouter>
       <Routes>
-        <Route path={'/chat'} element={<Chat/>} />
+        <Route path={'/chat'} element={<Chat />} />
         <Route path={'/*'} element={<Navigate to={'/chat'} />} />
       </Routes>
     </BrowserRouter>

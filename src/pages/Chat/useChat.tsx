@@ -1,16 +1,24 @@
-import useChats from "@/api/queries/useChats";
-import useUsers from "@/api/queries/useUsers";
-import useCreateChatMutation from "@/api/mutations/useCreateChatMutation";
-import { useState } from "react";
+import useChats from '@/api/queries/useChats';
+import useUsers from '@/api/queries/useUsers';
+import useCreateChatMutation from '@/api/mutations/useCreateChatMutation';
+import { type ChangeEventHandler, useState } from 'react';
+import useChatStore from '@/store/useChatStore.ts';
 
 const useChat = () => {
   const [isCreatingChat, setIsCreatingChat] = useState(false);
+  const [messageInputText, setMessageInputText] = useState('');
+  const { selectedChat } = useChatStore();
 
+  const onMessageInputTextChange: ChangeEventHandler<HTMLInputElement, HTMLInputElement> = (
+    event,
+  ) => setMessageInputText(event.target.value);
+
+  // TO DO: implement pagination and infinite scroll
   const { data: chatsData, isLoading: chatsLoading, refetch: refetchChats } = useChats();
-  const chats = chatsData?.data ?? [];
+  const chats = chatsData?.data?.data ?? [];
 
   const { data: usersData, isLoading: usersLoading } = useUsers();
-  const users = usersData?.data?.users ?? [];
+  const users = usersData?.data?.data ?? [];
 
   const { mutateAsync: createChatMutation, isPending: creatingChat } = useCreateChatMutation();
 
@@ -33,7 +41,10 @@ const useChat = () => {
     isCreatingChat,
     createChat,
     creatingChat,
-    chatCreationInProgress: creatingChat
+    chatCreationInProgress: creatingChat,
+    selectedChat,
+    onMessageInputTextChange,
+    messageInputText,
   };
 };
 

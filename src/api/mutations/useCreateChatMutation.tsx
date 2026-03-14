@@ -23,9 +23,7 @@ const useCreateChatMutation = () => {
     onError: (error: any) => {
       showToast({
         title: 'Erro ao criar conversa',
-        description:
-          error.response?.data?.message ||
-          'Não foi possível iniciar a conversa.',
+        description: error.response?.data?.message || 'Não foi possível iniciar a conversa.',
         status: 'error',
       });
     },

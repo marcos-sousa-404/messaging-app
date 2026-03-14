@@ -1,7 +1,7 @@
-import { Stack, HStack, Avatar, Text } from "@chakra-ui/react";
+import { Stack, HStack, Avatar, Text } from '@chakra-ui/react';
 import { Button, ThemeSwitcher } from '@/components';
-import useLogout from "@/hooks/useLogout";
-import { useAuthStore } from "@/store/useAuthStore";
+import useLogout from '@/hooks/useLogout';
+import useAuthStore from '@/store/useAuthStore';
 
 const Header = () => {
   const { logout } = useLogout();
@@ -17,7 +17,7 @@ const Header = () => {
         alignItems: 'center',
         justifyContent: 'space-between',
         paddingX: 6,
-        flexDir: 'row'
+        flexDir: 'row',
       }}
     >
       <HStack spacing={3}>

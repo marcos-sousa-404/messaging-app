@@ -1,11 +1,46 @@
-import { ChatCard, UserCard, Button } from '@/components';
-import { useAuthStore } from '@/store/useAuthStore';
+import { Button } from '@/components';
 import type { User } from '@/types/User';
-import { Box, Divider, VStack, Spinner, Center, Text } from '@chakra-ui/react';
+import { Box, Divider } from '@chakra-ui/react';
+import type { Chat } from '@/types/Chat.ts';
+import ListContent from '@/components/ChatsList/ListContent';
 
-interface ChatsListProps {
-  chats: any[];
-  users: any[];
+const ChatsList = ({
+  chatsLoading,
+  usersLoading,
+  isCreatingChat,
+  startCreatingChat,
+  stopCreatingChat,
+  ...rest
+}: ChatsListProps) => {
+  const loading = isCreatingChat ? usersLoading : chatsLoading;
+
+  return (
+    <Box sx={{ width: '350px', height: '100%', boxShadow: '4px 0px 8px rgba(0, 0, 0, 0.1)' }}>
+      <Box p={3}>
+        <Button
+          size="sm"
+          width="full"
+          onClick={isCreatingChat ? stopCreatingChat : startCreatingChat}
+          colorScheme={isCreatingChat ? 'red' : 'brand'}
+        >
+          {isCreatingChat ? 'Cancelar' : 'Novo chat'}
+        </Button>
+      </Box>
+
+      <Divider />
+
+      <Box p={3} py={2}>
+        <ListContent loading={loading} isCreatingChat={isCreatingChat} {...rest} />
+      </Box>
+    </Box>
+  );
+};
+
+export default ChatsList;
+
+export interface ChatsListProps {
+  chats: Chat[];
+  users: User[];
   chatsLoading: boolean;
   usersLoading: boolean;
   isCreatingChat: boolean;
@@ -14,88 +49,3 @@ interface ChatsListProps {
   createChat: (recipientId: string) => void;
   chatCreationInProgress: boolean;
 }
-
-const ChatsList = ({
-  chats,
-  users,
-  chatsLoading,
-  usersLoading,
-  isCreatingChat,
-  startCreatingChat,
-  stopCreatingChat,
-  createChat,
-  chatCreationInProgress
-}: ChatsListProps) => {
-  const { user } = useAuthStore();
-  const userId = user?._id;
-  const loading = isCreatingChat ? usersLoading : chatsLoading;
-
-  return (
-    <Box sx={{ width: '270px', height: '100%', boxShadow: '4px 0px 8px rgba(0, 0, 0, 0.1)' }}>
-      <Box p={3}>
-        <Button
-          size="sm"
-          width="full"
-          onClick={isCreatingChat ? stopCreatingChat : startCreatingChat}
-          colorScheme={isCreatingChat ? 'red' : 'brand'}
-          variant={isCreatingChat ? 'outline' : 'solid'}
-        >
-          {isCreatingChat ? 'Cancelar' : 'Novo chat'}
-        </Button>
-      </Box>
-
-      <Divider />
-
-      {loading ? (
-        <Center py={6}>
-          <Spinner />
-        </Center>
-      ) : (
-        <>
-          {isCreatingChat && users.length === 0 && (
-            <Center py={6} px={4}>
-              <Text fontSize="sm" color="gray.500" textAlign="center">
-                Nenhum usuário disponível para iniciar uma conversa.
-              </Text>
-            </Center>
-          )}
-
-          {!isCreatingChat && chats.length === 0 && (
-            <Center py={6} px={4}>
-              <Text fontSize="sm" color="gray.500" textAlign="center">
-                Você ainda não possui conversas. Clique em "Novo chat" para começar.
-              </Text>
-            </Center>
-          )}
-
-          <VStack spacing={0} align="stretch">
-            {isCreatingChat
-              ? users.map((user) => (
-                <Box
-                  key={user._id}
-                  cursor={chatCreationInProgress ? 'auto' : 'pointer'}
-                  onClick={() => createChat(user._id)}
-                >
-                  <UserCard disabled={chatCreationInProgress} name={user.name} email={user.email} />
-                  <Divider />
-                </Box>
-              ))
-              : chats.map((chat) => (
-                <Box key={chat.id}>
-                  <ChatCard
-                    name={chat.participants.find((participant: User) => participant._id !== userId).name}
-                    lastMessage={chat.lastMessage ?? ''}
-                    avatarUrl={chat.avatarUrl ?? ''}
-                    unreadCount={chat.unreadCount ?? 0}
-                  />
-                  <Divider />
-                </Box>
-              ))}
-          </VStack>
-        </>
-      )}
-    </Box>
-  );
-};
-
-export default ChatsList;

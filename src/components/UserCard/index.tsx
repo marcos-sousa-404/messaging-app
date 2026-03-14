@@ -1,14 +1,11 @@
-import { Card, CardBody, Text, Avatar, VStack, useColorModeValue, HStack } from '@chakra-ui/react';
+import { Avatar, Card, CardBody, HStack, Text, useColorModeValue, VStack } from '@chakra-ui/react';
 
-export interface UserCardProps {
-  name: string;
-  email: string;
-  disabled: boolean;
-}
+const UserCard = (props: UserCardProps) => {
+  const { name, email, disabled, avatarUrl } = props;
 
-const UserCard = ({ name, email, disabled }: UserCardProps) => {
   const bg = useColorModeValue('white', 'gray.800');
   const emailColor = useColorModeValue('gray.500', 'gray.400');
+  const hoverColor = useColorModeValue('gray.50', 'gray.700');
 
   return (
     <Card
@@ -19,11 +16,11 @@ const UserCard = ({ name, email, disabled }: UserCardProps) => {
       opacity={disabled ? 0.6 : 1}
       pointerEvents={disabled ? 'none' : 'auto'}
       transition="0.2s"
-      _hover={!disabled ? { bg: useColorModeValue('gray.50', 'gray.700') } : undefined}
+      _hover={!disabled ? { bg: hoverColor } : undefined}
     >
       <CardBody>
         <HStack spacing={4} align="center">
-          <Avatar name={name} />
+          <Avatar name={name} src={avatarUrl ?? ''} />
           <VStack align="start" spacing={0}>
             <Text fontWeight="bold">{name}</Text>
             <Text fontSize="sm" color={emailColor}>
@@ -37,3 +34,10 @@ const UserCard = ({ name, email, disabled }: UserCardProps) => {
 };
 
 export default UserCard;
+
+export interface UserCardProps {
+  name: string;
+  email: string;
+  disabled: boolean;
+  avatarUrl: string | null;
+}
