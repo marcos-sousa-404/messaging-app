@@ -11,11 +11,11 @@ interface ChatStore {
   otherUser: User | null;
   setOtherUser: (otherUser: User | null) => void;
   setSelectedChat: (chat: Chat | null) => void;
-  setMessages: (messages: ChatMessage[]) => void;
+  setMessages: (messages: ChatMessage[] | ((prev: ChatMessage[]) => ChatMessage[])) => void;
   setMessagesLoading: (loading: boolean) => void;
 }
 
-const chatStoreStore = createStore<ChatStore>()((set) => ({
+export const chatStore = createStore<ChatStore>()((set) => ({
   selectedChat: null,
   messages: [],
   messagesLoading: false,
@@ -26,10 +26,13 @@ const chatStoreStore = createStore<ChatStore>()((set) => ({
       ...(selectedChat === null ? { otherUser: null } : {}),
     }),
   setOtherUser: (otherUser: User | null) => set({ otherUser }),
-  setMessages: (messages) => set({ messages }),
+  setMessages: (nextMessages) =>
+    set((state) => ({
+      messages: typeof nextMessages === 'function' ? nextMessages(state.messages) : nextMessages,
+    })),
   setMessagesLoading: (messagesLoading) => set({ messagesLoading }),
 }));
 
-const useChatStore = () => useStore(chatStoreStore);
+const useChatStore = () => useStore(chatStore);
 
 export default useChatStore;

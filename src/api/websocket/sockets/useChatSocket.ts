@@ -9,7 +9,6 @@ import {
   onDisconnect,
   onErrorMessage,
   onReceiveMessage,
-  onUnreadCleared,
   onUserStatus,
   onUserTyping,
 } from '../events/chatEvents';
@@ -17,6 +16,7 @@ import { useQueryClient } from '@tanstack/react-query';
 import { usePlaySound } from '@/hooks';
 import notificationSound from '@/assets/sounds/new-notification.mp3';
 import { useAuthStore, useChatStore } from '@/store';
+import { chatStore } from '@/store/useChatStore.ts';
 
 const useChatSocket = (chatId?: string) => {
   const [isConnected, setIsConnected] = useState(false);
@@ -25,53 +25,48 @@ const useChatSocket = (chatId?: string) => {
   const queryClient = useQueryClient();
   const { play: playNotificationSound } = usePlaySound(notificationSound, 0.5);
 
-  // Pulling unnested state and setters
-  const { messages, setMessages, selectedChat } = useChatStore();
+  const { setMessages, selectedChat } = useChatStore();
   const { user } = useAuthStore();
 
   useEffect(() => {
     const socket = getSocket();
-
     socket.connect();
 
     onConnect(() => setIsConnected(true));
     onDisconnect(() => setIsConnected(false));
 
-    onErrorMessage((error) => {
-      console.error(error);
-    });
-
-    onUnreadCleared((data) => {
-      console.log(data);
-    });
+    onErrorMessage((error) => console.error(error));
 
     onReceiveMessage((data) => {
       const incomingChatId =
         typeof data.conversationId === 'string' ? data.conversationId : data.conversationId?._id;
+
       const isFromOtherUser = data.senderId?._id !== user?._id;
 
-      // Update the unnested messages array if we are currently looking at this chat
+      const selectedChat = chatStore.getState().selectedChat;
+
       if (selectedChat?._id === incomingChatId) {
-        setMessages([...messages, data]);
+        setMessages((prev) => {
+          const messageAlreadyExists = prev.some((msg) => msg._id === data._id);
+
+          if (messageAlreadyExists) {
+            return prev;
+          }
+
+          return [...prev, data];
+        });
       }
 
       if (isFromOtherUser) {
         playNotificationSound();
       }
 
-      void queryClient.refetchQueries({ queryKey: ['chat-messages', incomingChatId] });
+      void queryClient.invalidateQueries({ queryKey: ['chat-messages', incomingChatId] });
+      void queryClient.invalidateQueries({ queryKey: ['chats'] });
     });
 
-    onUserTyping((data) => {
-      setTypingUser(data.isTyping ? data.userName : null);
-    });
-
-    onUserStatus((data) => {
-      setOnlineUsers((prev) => ({
-        ...prev,
-        [data.userId]: data.isOnline,
-      }));
-    });
+    onUserTyping((data) => setTypingUser(data.isTyping ? data.userName : null));
+    onUserStatus((data) => setOnlineUsers((prev) => ({ ...prev, [data.userId]: data.isOnline })));
 
     if (chatId) {
       emitJoinChat(chatId);
@@ -82,15 +77,7 @@ const useChatSocket = (chatId?: string) => {
       if (chatId) emitDisconnected(chatId);
       clearAllChatListeners();
     };
-  }, [
-    chatId,
-    selectedChat?._id,
-    messages,
-    setMessages,
-    user?._id,
-    playNotificationSound,
-    queryClient,
-  ]);
+  }, [chatId, selectedChat?._id, setMessages, user?._id, playNotificationSound, queryClient]);
 
   return {
     isConnected,

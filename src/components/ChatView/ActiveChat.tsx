@@ -1,4 +1,5 @@
-import { Flex, VStack } from '@chakra-ui/react';
+import { useEffect, useRef } from 'react';
+import { Box, Flex, VStack } from '@chakra-ui/react';
 import { useAuthStore, useChatStore } from '@/store';
 import ChatMessage from '../ChatMessage';
 import NoMessages from '@/components/ChatView/NoMessages.tsx';
@@ -8,14 +9,26 @@ const ActiveChat = () => {
   const { selectedChat, messages, messagesLoading } = useChatStore();
   const { user } = useAuthStore();
 
-  if (!selectedChat) return null;
+  const bottomRef = useRef<HTMLDivElement>(null);
 
-  if (!messagesLoading && (!messages || messages.length === 0)) {
-    return <NoMessages />;
-  }
+  const scrollToBottom = () => {
+    bottomRef.current?.scrollIntoView();
+  };
+
+  useEffect(() => {
+    if (messages.length > 0) {
+      scrollToBottom();
+    }
+  }, [messages]);
+
+  if (!selectedChat) return null;
 
   if (messagesLoading) {
     return <Loading />;
+  }
+
+  if (!messages || messages.length === 0) {
+    return <NoMessages />;
   }
 
   return (
@@ -28,6 +41,7 @@ const ActiveChat = () => {
             origin={msg.senderId?._id === user?._id ? 'sent' : 'received'}
           />
         ))}
+        <Box ref={bottomRef} h="1px" />
       </VStack>
     </Flex>
   );
