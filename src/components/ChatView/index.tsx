@@ -9,6 +9,7 @@ import Button from '@/components/Button';
 const ChatView = (props: ChatViewProps) => {
   const { selectedChat, onMessageInputTextChange, messageInputText } = props;
   const backgroundColor = useColorModeValue('gray.100', 'gray.900');
+  const inputBackgroundColor = useColorModeValue('white', 'gray.800');
 
   if (!selectedChat) return <NoChatSelected />;
 
@@ -17,6 +18,7 @@ const ChatView = (props: ChatViewProps) => {
       <ActiveChat />
       <Stack direction={'row'} mb={'12px'} marginX={'auto'} width={'calc(100% - 24px)'}>
         <Input
+          bg={inputBackgroundColor}
           placeholder={'Digite uma mensagem'}
           alignSelf={'flex-end'}
           value={messageInputText}
