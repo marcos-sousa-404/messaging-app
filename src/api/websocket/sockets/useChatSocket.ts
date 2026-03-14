@@ -53,7 +53,7 @@ const useChatSocket = (chatId?: string) => {
             return prev;
           }
 
-          return [...prev, data];
+          return [data, ...prev];
         });
       }
 
