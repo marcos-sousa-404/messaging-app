@@ -5,7 +5,7 @@ const UserCard = (props: UserCardProps) => {
 
   const bg = useColorModeValue('white', 'gray.800');
   const emailColor = useColorModeValue('gray.500', 'gray.400');
-  const hoverColor = useColorModeValue('gray.50', 'gray.700');
+  const hoverColor = useColorModeValue('gray.100', 'gray.700');
 
   return (
     <Card

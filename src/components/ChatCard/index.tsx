@@ -14,7 +14,7 @@ const ChatCard = (props: ChatCardProps) => {
   const { name, avatarUrl, lastMessage, unreadCount = 0, isSelected, onClick } = props;
 
   const bg = useColorModeValue('white', 'gray.800');
-  const hoverColor = useColorModeValue('gray.50', 'gray.700');
+  const hoverColor = useColorModeValue('gray.100', 'gray.700');
   const messageColor = useColorModeValue('gray.500', 'gray.400');
 
   return (
