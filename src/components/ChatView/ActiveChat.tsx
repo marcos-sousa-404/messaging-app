@@ -11,6 +11,8 @@ const ActiveChat = () => {
 
   const bottomRef = useRef<HTMLDivElement>(null);
 
+  const reversedMessages = messages ? [...messages].reverse() : [];
+
   const scrollToBottom = () => {
     bottomRef.current?.scrollIntoView();
   };
@@ -34,7 +36,7 @@ const ActiveChat = () => {
   return (
     <Flex overflowY="scroll" p={4} direction="column">
       <VStack spacing={0} align="stretch">
-        {messages.map((msg) => (
+        {reversedMessages.map((msg) => (
           <ChatMessage
             key={msg._id}
             text={msg.text}
