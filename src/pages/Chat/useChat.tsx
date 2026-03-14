@@ -1,8 +1,6 @@
-import useChats from '@/api/queries/useChats';
-import useUsers from '@/api/queries/useUsers';
-import useCreateChatMutation from '@/api/mutations/useCreateChatMutation';
 import { type ChangeEventHandler, useState } from 'react';
-import useChatStore from '@/store/useChatStore.ts';
+import { useChats, useCreateChatMutation, useUsers } from '@/api';
+import { useChatStore } from '@/store';
 
 const useChat = () => {
   const [isCreatingChat, setIsCreatingChat] = useState(false);

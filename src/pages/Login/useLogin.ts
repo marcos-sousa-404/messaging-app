@@ -3,8 +3,8 @@ import * as yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
 import type { LoginFormData } from '@/pages/Login/types.ts';
 import { useNavigate } from 'react-router';
-import useLoginMutation from '@/api/mutations/useLoginMutation';
-import useAuthStore from '@/store/useAuthStore.ts';
+import { useLoginMutation } from '@/api';
+import { useAuthStore } from '@/store';
 
 const useLogin = () => {
   const { control, handleSubmit } = useForm<LoginFormData>({
