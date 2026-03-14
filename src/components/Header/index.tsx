@@ -12,6 +12,7 @@ import useLogout from '@/hooks/useLogout';
 import useAuthStore from '@/store/useAuthStore';
 import { HamburgerIcon } from '@chakra-ui/icons';
 import { useChatStore } from '@/store';
+import { FaArrowRightFromBracket } from 'react-icons/fa6';
 
 const Header = () => {
   const { logout } = useLogout();
@@ -51,9 +52,25 @@ const Header = () => {
       )}
 
       <HStack ml={'auto'} spacing={3}>
-        <Button onClick={logout} colorScheme="brand" size="sm">
-          Sair da conta
-        </Button>
+        <Show breakpoint="(max-width: 767px)">
+          <IconButton
+            aria-label={'logout'}
+            onClick={logout}
+            colorScheme="brand"
+            size="sm"
+            icon={<FaArrowRightFromBracket />}
+          />
+        </Show>
+        <Show breakpoint="(min-width: 768px)">
+          <Button
+            rightIcon={<FaArrowRightFromBracket />}
+            onClick={logout}
+            colorScheme="brand"
+            size="sm"
+          >
+            Sair da conta
+          </Button>
+        </Show>
         <ThemeSwitcher />
       </HStack>
     </Stack>
