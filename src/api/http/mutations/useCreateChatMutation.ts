@@ -1,6 +1,6 @@
-import getApi from '@/api/getApi.ts';
+import getApi from '@/api/http/getApi.ts';
 import { useMutation } from '@tanstack/react-query';
-import useToast from '@/hooks/useToast.tsx';
+import useToast from '@/hooks/useToast.ts';
 import type { ApiError } from '@/types/ApiError.ts';
 
 const createChat = async (payload: CreateChatPayload) => {
@@ -13,7 +13,7 @@ const useCreateChatMutation = () => {
   const showToast = useToast();
 
   return useMutation({
-    mutationKey: ['createChat'],
+    mutationKey: ['create-chat'],
     mutationFn: createChat,
     onSuccess: () => {
       showToast({

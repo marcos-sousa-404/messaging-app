@@ -1,6 +1,6 @@
-import useAuthStore from '@/store/useAuthStore.ts';
+import useAuthStore, { authStore } from '@/store/useAuthStore.ts';
 import { useNavigate } from 'react-router';
-import useToast from '@/hooks/useToast.tsx';
+import useToast from '@/hooks/useToast.ts';
 
 const useLogout = () => {
   const { setToken, setUser } = useAuthStore();
@@ -20,3 +20,12 @@ const useLogout = () => {
 };
 
 export default useLogout;
+
+export const logoutUser = (expiredToken?: boolean) => {
+  const state = authStore.getState();
+
+  state.setToken(null);
+  state.setUser(null);
+
+  window.location.href = expiredToken ? '/login?expired=true' : '/login';
+};

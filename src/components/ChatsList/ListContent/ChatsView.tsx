@@ -1,22 +1,27 @@
 import { ChatCard } from '@/components';
-import { Box, VStack } from '@chakra-ui/react';
+import { Box } from '@chakra-ui/react';
 import type { User } from '@/types/User.ts';
 import type { Chat } from '@/types/Chat.ts';
-import getUserProfilePictureUrl from '@/api/getUserProfilePictureUrl.ts';
+import { getUserProfilePictureUrl } from '@/helpers';
 import useChatStore from '@/store/useChatStore.ts';
+import GenericList from '@/components/GenericList';
 
 const ChatsView = ({ chats, userId }: ChatsViewProps) => {
   const { selectedChat, setSelectedChat } = useChatStore();
 
   return (
-    <VStack spacing={2} align="stretch">
-      {chats.map((chat) => {
+    <GenericList
+      items={chats}
+      keyExtractor={(chat) => chat._id}
+      renderItem={(chat) => {
         const otherUser = chat.participants.find((participant: User) => participant._id !== userId);
+
         if (!otherUser) return null;
+
         const avatarUrl = otherUser.image ? getUserProfilePictureUrl(otherUser.image) : null;
 
         return (
-          <Box key={chat._id}>
+          <Box>
             <ChatCard
               name={otherUser.name}
               lastMessage={''}
@@ -27,14 +32,14 @@ const ChatsView = ({ chats, userId }: ChatsViewProps) => {
             />
           </Box>
         );
-      })}
-    </VStack>
+      }}
+    />
   );
 };
 
 export default ChatsView;
 
-interface ChatsViewProps {
+export interface ChatsViewProps {
   chats: Chat[];
   userId?: string;
 }

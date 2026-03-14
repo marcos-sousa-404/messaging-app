@@ -4,7 +4,6 @@ import {
   Card,
   CardBody,
   HStack,
-  Spacer,
   Text,
   useColorModeValue,
   VStack,
@@ -36,8 +35,6 @@ const ChatCard = (props: ChatCardProps) => {
               {lastMessage}
             </Text>
           </VStack>
-
-          <Spacer />
 
           {unreadCount > 0 && (
             <Badge colorScheme="green" borderRadius="full" px={2}>

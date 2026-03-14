@@ -1,16 +1,18 @@
-import { Box, VStack } from '@chakra-ui/react';
+import { Box } from '@chakra-ui/react';
 import { UserCard } from '@/components';
 import type { User } from '@/types/User';
-import getUserProfilePictureUrl from '@/api/getUserProfilePictureUrl.ts';
+import { getUserProfilePictureUrl } from '@/helpers';
+import GenericList from '@/components/GenericList';
 
 const UsersView = ({ users, chatCreationInProgress, createChat }: UsersViewProps) => (
-  <VStack spacing={2} align="stretch">
-    {users.map((user) => {
+  <GenericList
+    items={users}
+    keyExtractor={(user) => user._id}
+    renderItem={(user) => {
       const avatarUrl = user.image ? getUserProfilePictureUrl(user.image) : null;
 
       return (
         <Box
-          key={user._id}
           cursor={chatCreationInProgress ? 'auto' : 'pointer'}
           onClick={() => !chatCreationInProgress && createChat(user._id)}
         >
@@ -22,13 +24,13 @@ const UsersView = ({ users, chatCreationInProgress, createChat }: UsersViewProps
           />
         </Box>
       );
-    })}
-  </VStack>
+    }}
+  />
 );
 
 export default UsersView;
 
-interface UsersViewProps {
+export interface UsersViewProps {
   users: User[];
   chatCreationInProgress: boolean;
   createChat: (id: string) => void;

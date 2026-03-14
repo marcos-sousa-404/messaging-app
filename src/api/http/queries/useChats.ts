@@ -1,4 +1,4 @@
-import getApi from '@/api/getApi.ts';
+import getApi from '@/api/http/getApi.ts';
 import type { Chat } from '@/types/Chat';
 import { useQuery } from '@tanstack/react-query';
 import type { PaginatedData } from '@/types/PaginatedData.ts';

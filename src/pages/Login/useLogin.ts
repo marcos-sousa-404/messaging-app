@@ -5,6 +5,8 @@ import type { LoginFormData } from '@/pages/Login/types.ts';
 import { useNavigate } from 'react-router';
 import { useLoginMutation } from '@/api';
 import { useAuthStore } from '@/store';
+import { useEffect } from 'react';
+import { useToast } from '@/hooks';
 
 const useLogin = () => {
   const { control, handleSubmit } = useForm<LoginFormData>({
@@ -14,6 +16,22 @@ const useLogin = () => {
       password: '',
     },
   });
+  const searchParams = new URLSearchParams(window.location.search);
+  const expired = searchParams.get('expired') === 'true';
+  const showExpiredTokenMessage = expired;
+  const showToast = useToast();
+
+  useEffect(() => {
+    if (showExpiredTokenMessage) {
+      showToast({
+        title: 'Sua sessão expirou. Faça login novamente.',
+        status: 'warning',
+        duration: 3000,
+      });
+      window.history.replaceState({}, document.title, window.location.pathname);
+    }
+  }, [showExpiredTokenMessage, showToast]);
+
   const { mutateAsync: login, isPending } = useLoginMutation();
   const { setToken, setUser } = useAuthStore();
 

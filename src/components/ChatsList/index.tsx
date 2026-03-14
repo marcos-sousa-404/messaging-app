@@ -3,6 +3,7 @@ import type { User } from '@/types/User';
 import { Box, Divider } from '@chakra-ui/react';
 import type { Chat } from '@/types/Chat.ts';
 import ListContent from '@/components/ChatsList/ListContent';
+import { useAuthStore } from '@/store';
 
 const ChatsList = ({
   chatsLoading,
@@ -13,6 +14,7 @@ const ChatsList = ({
   ...rest
 }: ChatsListProps) => {
   const loading = isCreatingChat ? usersLoading : chatsLoading;
+  const { user } = useAuthStore();
 
   return (
     <Box sx={{ width: '350px', height: '100%', boxShadow: '4px 0px 8px rgba(0, 0, 0, 0.1)' }}>
@@ -30,7 +32,12 @@ const ChatsList = ({
       <Divider />
 
       <Box p={3} py={2}>
-        <ListContent loading={loading} isCreatingChat={isCreatingChat} {...rest} />
+        <ListContent
+          loading={loading}
+          isCreatingChat={isCreatingChat}
+          userId={user?._id}
+          {...rest}
+        />
       </Box>
     </Box>
   );

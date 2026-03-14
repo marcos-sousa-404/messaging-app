@@ -1,6 +1,6 @@
 import { ChatsList, ChatView, Header } from '@/components';
 import { Box } from '@chakra-ui/react';
-import useChat from './useChat';
+import useChat from './useChat.ts';
 
 const Chat = () => {
   const {
@@ -13,9 +13,10 @@ const Chat = () => {
     chatsLoading,
     createChat,
     chatCreationInProgress,
-    selectedChat,
     onMessageInputTextChange,
     messageInputText,
+    handleSendMessage,
+    isSendingMessage,
   } = useChat();
 
   return (
@@ -34,9 +35,10 @@ const Chat = () => {
           startCreatingChat={startCreatingChat}
         />
         <ChatView
-          selectedChat={selectedChat}
           onMessageInputTextChange={onMessageInputTextChange}
           messageInputText={messageInputText}
+          handleSendMessage={handleSendMessage}
+          isSendingMessage={isSendingMessage}
         />
       </Box>
     </Box>
