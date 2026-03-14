@@ -34,15 +34,27 @@ const ActiveChat = () => {
   }
 
   return (
-    <Flex overflowY="scroll" p={4} direction="column">
+    <Flex overflowY="auto" p={4} direction="column">
       <VStack spacing={0} align="stretch">
-        {reversedMessages.map((msg) => (
-          <ChatMessage
-            key={msg._id}
-            text={msg.text}
-            origin={msg.senderId?._id === user?._id ? 'sent' : 'received'}
-          />
-        ))}
+        {reversedMessages.map((msg, index) => {
+          const isSameUserAbove =
+            index < reversedMessages.length - 1 &&
+            reversedMessages[index + 1].senderId?._id === msg.senderId?._id;
+
+          const isSameUserBelow =
+            index > 0 && reversedMessages[index - 1].senderId?._id === msg.senderId?._id;
+
+          return (
+            <ChatMessage
+              key={msg._id}
+              text={msg.text}
+              createdAt={msg.createdAt}
+              origin={msg.senderId?._id === user?._id ? 'sent' : 'received'}
+              hasMessagesBefore={isSameUserBelow}
+              hasMessagesAfter={isSameUserAbove}
+            />
+          );
+        })}
         <Box ref={bottomRef} h="1px" />
       </VStack>
     </Flex>

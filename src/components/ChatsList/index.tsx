@@ -3,7 +3,7 @@ import type { User } from '@/types/User';
 import { Box, Divider } from '@chakra-ui/react';
 import type { Chat } from '@/types/Chat.ts';
 import ListContent from '@/components/ChatsList/ListContent';
-import { useAuthStore } from '@/store';
+import { useAuthStore, useChatStore } from '@/store';
 
 const ChatsList = ({
   chatsLoading,
@@ -15,9 +15,16 @@ const ChatsList = ({
 }: ChatsListProps) => {
   const loading = isCreatingChat ? usersLoading : chatsLoading;
   const { user } = useAuthStore();
+  const { setSelectedChat } = useChatStore();
+  const { setChatsDrawerOpen, chatsDrawerOpen } = useChatStore();
+
+  const handleSelect = (chat: Chat) => {
+    setSelectedChat(chat);
+    if (chatsDrawerOpen) setChatsDrawerOpen(false);
+  };
 
   return (
-    <Box sx={{ width: '350px', height: '100%', boxShadow: '4px 0px 8px rgba(0, 0, 0, 0.1)' }}>
+    <Box h="100%" w="100%" display="flex" flexDirection="column">
       <Box p={3}>
         <Button
           size="sm"
@@ -25,17 +32,18 @@ const ChatsList = ({
           onClick={isCreatingChat ? stopCreatingChat : startCreatingChat}
           colorScheme={isCreatingChat ? 'red' : 'brand'}
         >
-          {isCreatingChat ? 'Cancelar' : 'Novo chat'}
+          {isCreatingChat ? 'Cancelar' : 'Nova conversa'}
         </Button>
       </Box>
 
       <Divider />
 
-      <Box p={3} py={2}>
+      <Box p={3} py={2} flex={1} overflowY="auto">
         <ListContent
           loading={loading}
           isCreatingChat={isCreatingChat}
           userId={user?._id}
+          handleSelect={handleSelect}
           {...rest}
         />
       </Box>

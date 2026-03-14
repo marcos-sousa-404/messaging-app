@@ -6,8 +6,16 @@ import ChatsView from '@/components/ChatsList/ListContent/ChatsView.tsx';
 import type { Chat } from '@/types/Chat.ts';
 
 const ListContent = (props: ListContentProps) => {
-  const { loading, isCreatingChat, users, chats, chatCreationInProgress, userId, createChat } =
-    props;
+  const {
+    loading,
+    isCreatingChat,
+    users,
+    chats,
+    chatCreationInProgress,
+    userId,
+    createChat,
+    handleSelect,
+  } = props;
 
   if (loading) {
     return (
@@ -30,9 +38,9 @@ const ListContent = (props: ListContentProps) => {
   }
 
   return chats.length === 0 ? (
-    <EmptyState message="Você ainda não possui conversas. Clique em 'Novo chat' para começar." />
+    <EmptyState message="Você ainda não possui conversas. Clique em 'Nova conversa' para começar." />
   ) : (
-    <ChatsView chats={chats} userId={userId} />
+    <ChatsView handleSelect={handleSelect} chats={chats} userId={userId} />
   );
 };
 
@@ -46,4 +54,5 @@ export interface ListContentProps {
   userId?: string;
   chatCreationInProgress: boolean;
   createChat: (recipientId: string) => void;
+  handleSelect: (chat: Chat) => void;
 }

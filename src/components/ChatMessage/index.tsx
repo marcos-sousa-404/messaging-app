@@ -1,25 +1,45 @@
-import { Flex, Box, Text } from '@chakra-ui/react';
+import { Flex, Stack, Text, useColorModeValue } from '@chakra-ui/react';
+import computeBorderRadius from '@/components/ChatMessage/computeBorderRadius.ts';
 
-const ChatMessage = ({ text, origin }: ChatMessageProps) => {
+const ChatMessage = (props: ChatMessageProps) => {
+  const { text, origin, createdAt, hasMessagesBefore, hasMessagesAfter } = props;
   const isSent = origin === 'sent';
 
+  const computedBorderRadius = computeBorderRadius(hasMessagesBefore, isSent);
+
+  const time = new Intl.DateTimeFormat('pt-BR', {
+    hour: '2-digit',
+    minute: '2-digit',
+  }).format(new Date(createdAt));
+
+  const sentBackgroundColor = useColorModeValue('brand.500', 'brand.400');
+  const receivedBackgroundColor = useColorModeValue('white', 'gray.700');
+  const sentColor = useColorModeValue('white', 'white');
+  const receivedColor = useColorModeValue('black', 'white');
+
   return (
-    <Flex w="100%" justify={isSent ? 'flex-end' : 'flex-start'} mb={2}>
-      <Box
+    <Flex w="100%" justify={isSent ? 'flex-end' : 'flex-start'} mb={hasMessagesAfter ? 0.5 : 2}>
+      <Stack
+        direction={'row'}
+        alignItems={'flex-end'}
         maxW="75%"
-        bg={isSent ? 'blue.500' : 'gray.200'}
-        color={isSent ? 'white' : 'black'}
+        bg={isSent ? sentBackgroundColor : receivedBackgroundColor}
+        color={isSent ? sentColor : receivedColor}
         px={4}
-        py={2}
-        borderRadius="xl"
-        borderBottomRightRadius={isSent ? 'sm' : 'xl'}
-        borderBottomLeftRadius={!isSent ? 'sm' : 'xl'}
+        pt={2}
+        pb={1}
+        {...computedBorderRadius}
         boxShadow="sm"
+        position="relative"
       >
-        <Text fontSize="md" wordBreak="break-word">
+        <Text fontSize="md" wordBreak="break-word" mb={1}>
           {text}
         </Text>
-      </Box>
+
+        <Text fontSize="xs" textAlign="right" opacity={0.8}>
+          {time}
+        </Text>
+      </Stack>
     </Flex>
   );
 };
@@ -29,4 +49,7 @@ export default ChatMessage;
 export interface ChatMessageProps {
   text: string;
   origin: 'sent' | 'received';
+  createdAt: string;
+  hasMessagesBefore: boolean;
+  hasMessagesAfter: boolean;
 }

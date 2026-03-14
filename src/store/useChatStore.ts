@@ -13,17 +13,26 @@ interface ChatStore {
   setSelectedChat: (chat: Chat | null) => void;
   setMessages: (messages: ChatMessage[] | ((prev: ChatMessage[]) => ChatMessage[])) => void;
   setMessagesLoading: (loading: boolean) => void;
+  chatsDrawerOpen: boolean;
+  setChatsDrawerOpen: (open: boolean) => void;
+  reset: () => void;
 }
 
-export const chatStore = createStore<ChatStore>()((set) => ({
+const defaultState = {
   selectedChat: null,
   messages: [],
   messagesLoading: false,
   otherUser: null,
+  chatsDrawerOpen: false,
+};
+
+export const chatStore = createStore<ChatStore>()((set) => ({
+  ...defaultState,
+  setChatsDrawerOpen: (open: boolean) => set({ chatsDrawerOpen: open }),
   setSelectedChat: (selectedChat) =>
     set({
       selectedChat,
-      ...(selectedChat === null ? { otherUser: null } : {}),
+      ...(selectedChat === null ? { otherUser: null, messages: [], messagesLoading: false } : {}),
     }),
   setOtherUser: (otherUser: User | null) => set({ otherUser }),
   setMessages: (nextMessages) =>
@@ -31,6 +40,7 @@ export const chatStore = createStore<ChatStore>()((set) => ({
       messages: typeof nextMessages === 'function' ? nextMessages(state.messages) : nextMessages,
     })),
   setMessagesLoading: (messagesLoading) => set({ messagesLoading }),
+  reset: () => set(defaultState),
 }));
 
 const useChatStore = () => useStore(chatStore);

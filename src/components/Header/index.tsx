@@ -1,11 +1,16 @@
-import { Stack, HStack, Avatar, Text } from '@chakra-ui/react';
+import { Avatar, HStack, IconButton, Show, Stack, Text } from '@chakra-ui/react';
 import { Button, ThemeSwitcher } from '@/components';
 import useLogout from '@/hooks/useLogout';
 import useAuthStore from '@/store/useAuthStore';
+import { HamburgerIcon } from '@chakra-ui/icons';
+import { useChatStore } from '@/store';
 
 const Header = () => {
   const { logout } = useLogout();
   const { user } = useAuthStore();
+  const { setChatsDrawerOpen } = useChatStore();
+
+  const openMobileDrawer = () => setChatsDrawerOpen(true);
 
   return (
     <Stack
@@ -20,6 +25,14 @@ const Header = () => {
         flexDir: 'row',
       }}
     >
+      <Show breakpoint="(max-width: 767px)">
+        <IconButton
+          onClick={openMobileDrawer}
+          aria-label={'open-drawer'}
+          icon={<HamburgerIcon />}
+          variant={'ghost'}
+        />
+      </Show>
       <HStack spacing={3}>
         <Avatar name={user?.name} size="sm" />
         <Text fontWeight="semibold">{user?.name}</Text>

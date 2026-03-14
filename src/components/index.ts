@@ -10,3 +10,4 @@ export { default as ChatCard } from './ChatCard/index.tsx';
 export { default as ChatsList } from './ChatsList/index.tsx';
 export { default as ChatView } from './ChatView/index.tsx';
 export { default as GenericList } from './GenericList/index.tsx';
+export { default as ChatSidebar } from './ChatSidebar/index.tsx';

@@ -6,8 +6,9 @@ import { getUserProfilePictureUrl } from '@/helpers';
 import useChatStore from '@/store/useChatStore.ts';
 import GenericList from '@/components/GenericList';
 
-const ChatsView = ({ chats, userId }: ChatsViewProps) => {
-  const { selectedChat, setSelectedChat } = useChatStore();
+const ChatsView = (props: ChatsViewProps) => {
+  const { chats, userId, handleSelect } = props;
+  const { selectedChat } = useChatStore();
 
   return (
     <GenericList
@@ -28,7 +29,7 @@ const ChatsView = ({ chats, userId }: ChatsViewProps) => {
               avatarUrl={avatarUrl}
               unreadCount={0}
               isSelected={selectedChat?._id === chat._id}
-              onClick={() => setSelectedChat(chat)}
+              onClick={() => handleSelect(chat)}
             />
           </Box>
         );
@@ -42,4 +43,5 @@ export default ChatsView;
 export interface ChatsViewProps {
   chats: Chat[];
   userId?: string;
+  handleSelect: (chat: Chat) => void;
 }

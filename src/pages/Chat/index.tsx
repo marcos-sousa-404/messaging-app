@@ -1,4 +1,4 @@
-import { ChatsList, ChatView, Header } from '@/components';
+import { ChatSidebar, ChatView, Header } from '@/components';
 import { Box } from '@chakra-ui/react';
 import useChat from './useChat.ts';
 
@@ -23,7 +23,7 @@ const Chat = () => {
     <Box>
       <Header />
       <Box as={'main'} height={'calc(100vh - 4rem)'} display={'flex'}>
-        <ChatsList
+        <ChatSidebar
           createChat={createChat}
           stopCreatingChat={stopCreatingChat}
           chats={chats}
