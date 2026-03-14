@@ -35,7 +35,7 @@ const ChatSidebar = (props: ChatsListProps) => {
             <DrawerCloseButton />
             <DrawerHeader borderBottomWidth="1px">Minhas conversas</DrawerHeader>
             <DrawerBody p={0}>
-              <ChatsList {...props} onClose={onClose} />
+              <ChatsList {...props} />
             </DrawerBody>
           </DrawerContent>
         </Drawer>
