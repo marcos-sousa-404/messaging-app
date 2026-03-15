@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react';
+import { memo, useEffect, useRef } from 'react';
 import { Box, Flex, VStack } from '@chakra-ui/react';
 import { useAuthStore, useChatStore } from '@/store';
 import ChatMessage from '../ChatMessage';
@@ -6,10 +6,13 @@ import NoMessages from '@/components/ChatView/NoMessages.tsx';
 import Loading from '@/components/ChatView/Loading.tsx';
 import DateMarker from '../DateMarker';
 import shouldShowDateMarker from '@/components/ChatView/shouldShowDateMarker.ts';
+import { TypingIndicator } from '@/components';
 
-const ActiveChat = () => {
-  const { selectedChat, messages, messagesLoading } = useChatStore();
+const ActiveChat = memo(() => {
+  const { selectedChat, messages, messagesLoading, typingUserIds, otherUser } = useChatStore();
   const { user } = useAuthStore();
+
+  const otherUserIsTyping = otherUser && typingUserIds.includes(otherUser?._id);
 
   const bottomRef = useRef<HTMLDivElement>(null);
 
@@ -24,6 +27,12 @@ const ActiveChat = () => {
       scrollToBottom();
     }
   }, [messages]);
+
+  useEffect(() => {
+    if (otherUserIsTyping) {
+      scrollToBottom();
+    }
+  }, [otherUserIsTyping]);
 
   if (!selectedChat) return null;
 
@@ -47,6 +56,7 @@ const ActiveChat = () => {
             reversedMessages[index + 1].senderId?._id === msg.senderId?._id;
 
           const showDateMarker = shouldShowDateMarker(msg, index, reversedMessages);
+          const origin = msg.senderId?._id === user?._id ? 'sent' : 'received';
 
           return (
             <Box key={msg._id} w="100%">
@@ -54,17 +64,20 @@ const ActiveChat = () => {
               <ChatMessage
                 text={msg.text}
                 createdAt={msg.createdAt}
-                origin={msg.senderId?._id === user?._id ? 'sent' : 'received'}
+                origin={origin}
                 hasMessagesBefore={isSameUserAbove}
-                hasMessagesAfter={isSameUserBelow}
+                hasMessagesAfter={
+                  origin === 'received' && otherUserIsTyping ? true : isSameUserBelow
+                }
               />
             </Box>
           );
         })}
+        {otherUserIsTyping && <TypingIndicator />}
         <Box ref={bottomRef} h="1px" />
       </VStack>
     </Flex>
   );
-};
+});
 
 export default ActiveChat;

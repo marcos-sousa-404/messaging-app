@@ -1,6 +1,7 @@
 export type UserTypingData = {
   isTyping: boolean;
   userName: string;
+  userId: string;
 };
 
 export type UserStatusData = {

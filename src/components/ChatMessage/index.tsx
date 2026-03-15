@@ -1,7 +1,8 @@
 import { Flex, Stack, Text, useColorModeValue } from '@chakra-ui/react';
 import computeBorderRadius from '@/components/ChatMessage/computeBorderRadius.ts';
+import { memo } from 'react';
 
-const ChatMessage = (props: ChatMessageProps) => {
+const ChatMessage = memo((props: ChatMessageProps) => {
   const { text, origin, createdAt, hasMessagesBefore, hasMessagesAfter } = props;
   const isSent = origin === 'sent';
 
@@ -42,7 +43,7 @@ const ChatMessage = (props: ChatMessageProps) => {
       </Stack>
     </Flex>
   );
-};
+});
 
 export default ChatMessage;
 

@@ -12,8 +12,9 @@ import useLogout from '@/hooks/useLogout';
 import useAuthStore from '@/store/useAuthStore';
 import { useChatStore } from '@/store';
 import { FaArrowLeft, FaArrowRightFromBracket } from 'react-icons/fa6';
+import { memo } from 'react';
 
-const Header = () => {
+const Header = memo(() => {
   const { logout } = useLogout();
   const { user } = useAuthStore();
   const { setChatsListOpen, otherUser, chatsListOpen } = useChatStore();
@@ -79,6 +80,6 @@ const Header = () => {
       </HStack>
     </Stack>
   );
-};
+});
 
 export default Header;

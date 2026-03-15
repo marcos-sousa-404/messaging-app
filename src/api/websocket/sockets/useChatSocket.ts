@@ -5,6 +5,7 @@ import {
   emitConnected,
   emitDisconnected,
   emitJoinChat,
+  emitTypingStop,
   onConnect,
   onDisconnect,
   onErrorMessage,
@@ -20,12 +21,11 @@ import { chatStore } from '@/store/useChatStore.ts';
 
 const useChatSocket = (chatId?: string) => {
   const [isConnected, setIsConnected] = useState(false);
-  const [typingUser, setTypingUser] = useState<string | null>(null);
   const [onlineUsers, setOnlineUsers] = useState<Record<string, boolean>>({});
   const queryClient = useQueryClient();
   const { play: playNotificationSound } = usePlaySound(notificationSound, 0.5);
 
-  const { setMessages, selectedChat } = useChatStore();
+  const { setMessages, selectedChat, setTypingUserIds } = useChatStore();
   const { user } = useAuthStore();
 
   useEffect(() => {
@@ -45,6 +45,7 @@ const useChatSocket = (chatId?: string) => {
 
       const selectedChat = chatStore.getState().selectedChat;
 
+      if (incomingChatId) emitTypingStop(incomingChatId);
       if (selectedChat?._id === incomingChatId) {
         setMessages((prev) => {
           const messageAlreadyExists = prev.some((msg) => msg._id === data._id);
@@ -65,7 +66,15 @@ const useChatSocket = (chatId?: string) => {
       void queryClient.invalidateQueries({ queryKey: ['chats'] });
     });
 
-    onUserTyping((data) => setTypingUser(data.isTyping ? data.userName : null));
+    onUserTyping((data) => {
+      setTypingUserIds((prev) => {
+        const dataToSet = [...prev, data.userId].filter(
+          (id) => id !== data.userId || (id === data.userId && data.isTyping),
+        );
+
+        return Array.from(new Set(dataToSet));
+      });
+    });
     onUserStatus((data) => setOnlineUsers((prev) => ({ ...prev, [data.userId]: data.isOnline })));
 
     if (chatId) {
@@ -81,7 +90,6 @@ const useChatSocket = (chatId?: string) => {
 
   return {
     isConnected,
-    typingUser,
     onlineUsers,
   };
 };

@@ -1,5 +1,7 @@
-import { type ChangeEvent, useEffect, useState } from 'react';
+import { type ChangeEvent, useCallback, useEffect, useRef, useState } from 'react';
 import {
+  emitTypingStart,
+  emitTypingStop,
   useChatMessages,
   useChats,
   useChatSocket,
@@ -13,6 +15,8 @@ import type { User } from '@/types/User.ts';
 const useChat = () => {
   const [isCreatingChat, setIsCreatingChat] = useState(false);
   const [messageInputText, setMessageInputText] = useState('');
+  const [isTyping, setIsTyping] = useState(false);
+  const typingStopTimer = useRef<NodeJS.Timeout | null>(null);
 
   const { selectedChat, otherUser, setMessages, setMessagesLoading, setOtherUser } = useChatStore();
 
@@ -51,8 +55,43 @@ const useChat = () => {
 
   useChatSocket(selectedChat?._id);
 
+  const startTypingStopTimer = () => {
+    if (typingStopTimer.current) {
+      clearTimeout(typingStopTimer.current);
+    }
+    typingStopTimer.current = setTimeout(() => {
+      if (selectedChat) {
+        emitTypingStop(selectedChat._id);
+        setIsTyping(false);
+      }
+    }, 3000);
+  };
+
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setMessageInputText('');
+  }, [selectedChat?._id]);
+
   const onMessageInputTextChange = (event: ChangeEvent<HTMLInputElement>) => {
     setMessageInputText(event.target.value);
+
+    if (event.target.value.trim() === '') {
+      stopTyping();
+      return;
+    }
+    if (selectedChat && !isTyping) {
+      emitTypingStart(selectedChat?._id);
+      setIsTyping(true);
+    }
+    startTypingStopTimer();
+  };
+
+  const stopTyping = () => {
+    if (selectedChat) emitTypingStop(selectedChat._id);
+    setIsTyping(false);
+    if (typingStopTimer.current) {
+      clearTimeout(typingStopTimer.current);
+    }
   };
 
   const handleSendMessage = async () => {
@@ -63,6 +102,8 @@ const useChat = () => {
       text: messageInputText,
       receiverId: otherUser._id,
     });
+
+    stopTyping();
 
     setMessageInputText('');
   };
@@ -75,14 +116,17 @@ const useChat = () => {
 
   const { mutateAsync: createChatMutation, isPending: creatingChat } = useCreateChatMutation();
 
-  const startCreatingChat = () => setIsCreatingChat(true);
-  const stopCreatingChat = () => setIsCreatingChat(false);
+  const startCreatingChat = useCallback(() => setIsCreatingChat(true), [setIsCreatingChat]);
+  const stopCreatingChat = useCallback(() => setIsCreatingChat(false), [setIsCreatingChat]);
 
-  const createChat = async (recipientId: string) => {
-    await createChatMutation({ recipientId });
-    await refetchChats();
-    setIsCreatingChat(false);
-  };
+  const createChat = useCallback(
+    async (recipientId: string) => {
+      await createChatMutation({ recipientId });
+      await refetchChats();
+      setIsCreatingChat(false);
+    },
+    [createChatMutation, refetchChats],
+  );
 
   return {
     chats,

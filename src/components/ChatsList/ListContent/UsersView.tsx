@@ -3,8 +3,9 @@ import { UserCard } from '@/components';
 import type { User } from '@/types/User';
 import { getUserProfilePictureUrl } from '@/helpers';
 import GenericList from '@/components/GenericList';
+import { memo } from 'react';
 
-const UsersView = ({ users, chatCreationInProgress, createChat }: UsersViewProps) => (
+const UsersView = memo(({ users, chatCreationInProgress, createChat }: UsersViewProps) => (
   <GenericList
     items={users}
     keyExtractor={(user) => user._id}
@@ -26,7 +27,7 @@ const UsersView = ({ users, chatCreationInProgress, createChat }: UsersViewProps
       );
     }}
   />
-);
+));
 
 export default UsersView;
 

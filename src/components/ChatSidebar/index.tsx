@@ -1,8 +1,9 @@
 import { Box, Show, useColorModeValue } from '@chakra-ui/react';
 import ChatsList, { type ChatsListProps } from '../ChatsList';
 import { useChatStore } from '@/store';
+import { memo } from 'react';
 
-const ChatSidebar = (props: ChatsListProps) => {
+const ChatSidebar = memo((props: ChatsListProps) => {
   const { chatsListOpen } = useChatStore();
   const borderColor = useColorModeValue('gray.200', 'gray.700');
 
@@ -26,6 +27,6 @@ const ChatSidebar = (props: ChatsListProps) => {
       )}
     </>
   );
-};
+});
 
 export default ChatSidebar;

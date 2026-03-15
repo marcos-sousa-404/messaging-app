@@ -15,6 +15,8 @@ interface ChatStore {
   setMessagesLoading: (loading: boolean) => void;
   chatsListOpen: boolean;
   setChatsListOpen: (open: boolean) => void;
+  setTypingUserIds: (messages: string[] | ((prev: string[]) => string[])) => void;
+  typingUserIds: string[];
   reset: () => void;
 }
 
@@ -24,10 +26,18 @@ const defaultState = {
   messagesLoading: false,
   otherUser: null,
   chatsListOpen: true,
+  typingUserIds: [],
 };
 
 export const chatStore = createStore<ChatStore>()((set) => ({
   ...defaultState,
+  setTypingUserIds: (nextTypingUserIds) =>
+    set((state) => ({
+      typingUserIds:
+        typeof nextTypingUserIds === 'function'
+          ? nextTypingUserIds(state.typingUserIds)
+          : nextTypingUserIds,
+    })),
   setChatsListOpen: (open: boolean) => set({ chatsListOpen: open }),
   setSelectedChat: (selectedChat) =>
     set({

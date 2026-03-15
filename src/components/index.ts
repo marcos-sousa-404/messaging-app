@@ -12,3 +12,4 @@ export { default as ChatView } from './ChatView/index.tsx';
 export { default as GenericList } from './GenericList/index.tsx';
 export { default as ChatSidebar } from './ChatSidebar/index.tsx';
 export { default as DateMarker } from './DateMarker/index.tsx';
+export { default as TypingIndicator } from './TypingIndicator/index.tsx';
