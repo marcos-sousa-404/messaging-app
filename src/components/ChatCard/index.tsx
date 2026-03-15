@@ -24,6 +24,7 @@ const ChatCard = (props: ChatCardProps) => {
       w="full"
       bg={isSelected ? hoverColor : bg}
       boxShadow="sm"
+      size={'sm'}
     >
       <CardBody>
         <HStack spacing={4} align="center">

@@ -17,6 +17,7 @@ const UserCard = (props: UserCardProps) => {
       pointerEvents={disabled ? 'none' : 'auto'}
       transition="0.2s"
       _hover={!disabled ? { bg: hoverColor } : undefined}
+      size={'sm'}
     >
       <CardBody>
         <HStack spacing={4} align="center">
