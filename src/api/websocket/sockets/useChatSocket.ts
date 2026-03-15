@@ -1,7 +1,6 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { getSocket } from '../socket';
 import {
-  clearAllChatListeners,
   emitConnected,
   emitDisconnected,
   emitJoinChat,
@@ -18,6 +17,8 @@ import { usePlaySound } from '@/hooks';
 import notificationSound from '@/assets/sounds/new-notification.mp3';
 import { useAuthStore, useChatStore } from '@/store';
 import { chatStore } from '@/store/useChatStore.ts';
+import type { ChatMessage } from '@/types/ChatMessage.ts';
+import type { UserStatusData, UserTypingData } from '@/api/websocket/sockets/types.ts';
 
 const useChatSocket = (chatId?: string) => {
   const [isConnected, setIsConnected] = useState(false);
@@ -25,73 +26,92 @@ const useChatSocket = (chatId?: string) => {
   const queryClient = useQueryClient();
   const { play: playNotificationSound } = usePlaySound(notificationSound, 0.5);
 
-  const { setMessages, selectedChat, setTypingUserIds } = useChatStore();
+  const { setMessages, setTypingUserIds } = useChatStore();
   const { user } = useAuthStore();
+
+  const typingTimeouts = useRef<Record<string, NodeJS.Timeout>>({});
 
   useEffect(() => {
     const socket = getSocket();
-    socket.connect();
+    if (!socket.connected) socket.connect();
 
     onConnect(() => setIsConnected(true));
     onDisconnect(() => setIsConnected(false));
+    onErrorMessage((error) => console.error('Socket Error:', error));
 
-    onErrorMessage((error) => console.error(error));
-
-    onReceiveMessage((data) => {
+    const handleReceiveMessage = (data: ChatMessage) => {
       const incomingChatId =
         typeof data.conversationId === 'string' ? data.conversationId : data.conversationId?._id;
 
-      const isFromOtherUser = data.senderId?._id !== user?._id;
-
-      const selectedChat = chatStore.getState().selectedChat;
+      const currentSelectedChat = chatStore.getState().selectedChat;
 
       if (incomingChatId) emitTypingStop(incomingChatId);
-      if (selectedChat?._id === incomingChatId) {
+
+      if (currentSelectedChat?._id === incomingChatId) {
         setMessages((prev) => {
-          const messageAlreadyExists = prev.some((msg) => msg._id === data._id);
-
-          if (messageAlreadyExists) {
-            return prev;
-          }
-
+          if (prev.some((msg) => msg._id === data._id)) return prev;
           return [data, ...prev];
         });
       }
 
-      if (isFromOtherUser) {
+      if (data.senderId?._id !== user?._id) {
         playNotificationSound();
       }
 
       void queryClient.invalidateQueries({ queryKey: ['chat-messages', incomingChatId] });
       void queryClient.invalidateQueries({ queryKey: ['chats'] });
-    });
+    };
 
-    onUserTyping((data) => {
+    const handleUserTyping = (data: UserTypingData) => {
+      if (typingTimeouts.current[data.userId]) {
+        clearTimeout(typingTimeouts.current[data.userId]);
+        delete typingTimeouts.current[data.userId];
+      }
+
       setTypingUserIds((prev) => {
-        const dataToSet = [...prev, data.userId].filter(
-          (id) => id !== data.userId || (id === data.userId && data.isTyping),
-        );
+        if (data.isTyping) {
+          typingTimeouts.current[data.userId] = setTimeout(() => {
+            setTypingUserIds((current) => current.filter((id) => id !== data.userId));
+            delete typingTimeouts.current[data.userId];
+          }, 5000);
 
-        return Array.from(new Set(dataToSet));
+          return Array.from(new Set([...prev, data.userId]));
+        } else {
+          return prev.filter((id) => id !== data.userId);
+        }
       });
-    });
-    onUserStatus((data) => setOnlineUsers((prev) => ({ ...prev, [data.userId]: data.isOnline })));
+    };
 
+    const handleUserStatus = (data: UserStatusData) => {
+      setOnlineUsers((prev) => ({ ...prev, [data.userId]: data.isOnline }));
+    };
+
+    onReceiveMessage(handleReceiveMessage);
+    onUserTyping(handleUserTyping);
+    onUserStatus(handleUserStatus);
+
+    return () => {
+      socket.off('receive_message', handleReceiveMessage);
+      socket.off('user_typing', handleUserTyping);
+      socket.off('user_status', handleUserStatus);
+
+      Object.values(typingTimeouts.current).forEach(clearTimeout);
+      typingTimeouts.current = {};
+    };
+  }, [user?._id, playNotificationSound, queryClient, setMessages, setTypingUserIds]);
+
+  useEffect(() => {
     if (chatId) {
       emitJoinChat(chatId);
       emitConnected(chatId);
+
+      return () => {
+        emitDisconnected(chatId);
+      };
     }
+  }, [chatId]);
 
-    return () => {
-      if (chatId) emitDisconnected(chatId);
-      clearAllChatListeners();
-    };
-  }, [chatId, selectedChat?._id, setMessages, user?._id, playNotificationSound, queryClient]);
-
-  return {
-    isConnected,
-    onlineUsers,
-  };
+  return { isConnected, onlineUsers };
 };
 
 export default useChatSocket;
