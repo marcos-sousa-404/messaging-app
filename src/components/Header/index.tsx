@@ -53,11 +53,13 @@ const Header = () => {
 
       <HStack ml={'auto'} spacing={3}>
         <Show breakpoint="(max-width: 767px)">
-          <IconButton
+          <Button
             aria-label={'logout'}
             onClick={logout}
             colorScheme="brand"
             size="sm"
+            as={IconButton}
+            // @ts-expect-error This icon prop is not recognized by the Button component, but it works when using IconButton as the base component
             icon={<FaArrowRightFromBracket />}
           />
         </Show>
