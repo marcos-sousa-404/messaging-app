@@ -22,7 +22,11 @@ const ChatsView = memo((props: ChatsViewProps) => {
 
         const avatarUrl = otherUser.image ? getUserProfilePictureUrl(otherUser.image) : null;
         const isTyping = typingUserIds.includes(otherUser._id);
-        const lastMessage = isTyping ? 'Digitando...' : '';
+        const lastMessage = isTyping
+          ? 'Digitando...'
+          : typeof chat.lastMessage === 'string'
+            ? chat.lastMessage
+            : chat.lastMessage?.text || '';
 
         return (
           <Box>
