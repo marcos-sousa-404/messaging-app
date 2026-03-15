@@ -1,6 +1,6 @@
 import NoChatSelected from '@/components/ChatView/NoChatSelected.tsx';
 import ActiveChat from '@/components/ChatView/ActiveChat.tsx';
-import { Icon, Input, Stack, useColorModeValue } from '@chakra-ui/react';
+import { Icon, Input, Stack, useBreakpointValue, useColorModeValue } from '@chakra-ui/react';
 import { FaPaperPlane } from 'react-icons/fa';
 import type { ChangeEventHandler } from 'react';
 import Button from '@/components/Button';
@@ -12,7 +12,9 @@ const ChatView = (props: ChatViewProps) => {
   const backgroundColor = useColorModeValue('gray.100', 'gray.900');
   const inputBackgroundColor = useColorModeValue('white', 'gray.800');
 
-  if (!selectedChat && !chatsListOpen) return <NoChatSelected />;
+  const isMobile = useBreakpointValue({ base: true, md: false });
+
+  if (!selectedChat && (!chatsListOpen || !isMobile)) return <NoChatSelected />;
 
   return (
     <Stack height={'calc(100dvh - 4rem)'} overflow={'hidden'} flex={1} bg={backgroundColor}>
