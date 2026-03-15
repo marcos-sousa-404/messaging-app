@@ -16,11 +16,11 @@ const ChatsList = ({
   const loading = isCreatingChat ? usersLoading : chatsLoading;
   const { user } = useAuthStore();
   const { setSelectedChat } = useChatStore();
-  const { setChatsDrawerOpen, chatsDrawerOpen } = useChatStore();
+  const { setChatsListOpen, chatsListOpen } = useChatStore();
 
   const handleSelect = (chat: Chat) => {
     setSelectedChat(chat);
-    if (chatsDrawerOpen) setChatsDrawerOpen(false);
+    if (chatsListOpen) setChatsListOpen(false);
   };
 
   return (

@@ -8,14 +8,14 @@ import { useChatStore } from '@/store';
 
 const ChatView = (props: ChatViewProps) => {
   const { onMessageInputTextChange, messageInputText, handleSendMessage } = props;
-  const { selectedChat } = useChatStore();
+  const { selectedChat, chatsListOpen } = useChatStore();
   const backgroundColor = useColorModeValue('gray.100', 'gray.900');
   const inputBackgroundColor = useColorModeValue('white', 'gray.800');
 
-  if (!selectedChat) return <NoChatSelected />;
+  if (!selectedChat && !chatsListOpen) return <NoChatSelected />;
 
   return (
-    <Stack height={'calc(100vh - 4rem)'} overflow={'hidden'} flex={1} bg={backgroundColor}>
+    <Stack height={'calc(100dvh - 4rem)'} overflow={'hidden'} flex={1} bg={backgroundColor}>
       <ActiveChat />
       <Stack
         direction={'row'}

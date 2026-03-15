@@ -13,7 +13,7 @@ const Login = () => {
       </Box>
       <Box
         as={'main'}
-        height={'100vh'}
+        height={'100dvh'}
         display={'flex'}
         justifyContent={'center'}
         alignItems={'center'}

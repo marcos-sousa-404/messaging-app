@@ -22,7 +22,7 @@ const Chat = () => {
   return (
     <Box>
       <Header />
-      <Box as={'main'} height={'calc(100vh - 4rem)'} display={'flex'}>
+      <Box as={'main'} height={'calc(100dvh - 4rem)'} display={'flex'}>
         <ChatSidebar
           createChat={createChat}
           stopCreatingChat={stopCreatingChat}

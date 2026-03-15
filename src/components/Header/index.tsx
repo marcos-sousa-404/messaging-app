@@ -10,19 +10,19 @@ import {
 import { Button, ThemeSwitcher } from '@/components';
 import useLogout from '@/hooks/useLogout';
 import useAuthStore from '@/store/useAuthStore';
-import { HamburgerIcon } from '@chakra-ui/icons';
 import { useChatStore } from '@/store';
-import { FaArrowRightFromBracket } from 'react-icons/fa6';
+import { FaArrowLeft, FaArrowRightFromBracket } from 'react-icons/fa6';
 
 const Header = () => {
   const { logout } = useLogout();
   const { user } = useAuthStore();
-  const { setChatsDrawerOpen, otherUser } = useChatStore();
+  const { setChatsListOpen, otherUser, chatsListOpen } = useChatStore();
 
-  const openMobileDrawer = () => setChatsDrawerOpen(true);
+  const toggleChatsListOpen = () => setChatsListOpen(!chatsListOpen);
+
   const isMobile = useBreakpointValue({ base: true, md: false });
 
-  const userDataToUse = isMobile ? otherUser : user;
+  const userDataToUse = isMobile && !chatsListOpen ? otherUser : user;
 
   return (
     <Stack
@@ -36,14 +36,16 @@ const Header = () => {
         flexDir: 'row',
       }}
     >
-      <Show breakpoint="(max-width: 767px)">
-        <IconButton
-          onClick={openMobileDrawer}
-          aria-label={'open-drawer'}
-          icon={<HamburgerIcon />}
-          variant={'ghost'}
-        />
-      </Show>
+      {!chatsListOpen && (
+        <Show breakpoint="(max-width: 767px)">
+          <IconButton
+            onClick={toggleChatsListOpen}
+            aria-label={'toggle-chats-list'}
+            icon={<FaArrowLeft />}
+            variant={'ghost'}
+          />
+        </Show>
+      )}
       {userDataToUse && (
         <HStack spacing={3}>
           <Avatar name={userDataToUse?.name} size="sm" />

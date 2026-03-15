@@ -13,8 +13,8 @@ interface ChatStore {
   setSelectedChat: (chat: Chat | null) => void;
   setMessages: (messages: ChatMessage[] | ((prev: ChatMessage[]) => ChatMessage[])) => void;
   setMessagesLoading: (loading: boolean) => void;
-  chatsDrawerOpen: boolean;
-  setChatsDrawerOpen: (open: boolean) => void;
+  chatsListOpen: boolean;
+  setChatsListOpen: (open: boolean) => void;
   reset: () => void;
 }
 
@@ -23,12 +23,12 @@ const defaultState = {
   messages: [],
   messagesLoading: false,
   otherUser: null,
-  chatsDrawerOpen: false,
+  chatsListOpen: true,
 };
 
 export const chatStore = createStore<ChatStore>()((set) => ({
   ...defaultState,
-  setChatsDrawerOpen: (open: boolean) => set({ chatsDrawerOpen: open }),
+  setChatsListOpen: (open: boolean) => set({ chatsListOpen: open }),
   setSelectedChat: (selectedChat) =>
     set({
       selectedChat,
