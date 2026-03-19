@@ -1,29 +1,16 @@
-import {
-  Avatar,
-  HStack,
-  IconButton,
-  Show,
-  Stack,
-  Text,
-  useBreakpointValue,
-} from '@chakra-ui/react';
+import { HStack, IconButton, Show, Stack } from '@chakra-ui/react';
 import { Button, ThemeSwitcher } from '@/components';
 import useLogout from '@/hooks/useLogout';
-import useAuthStore from '@/store/useAuthStore';
 import { useChatStore } from '@/store';
 import { FaArrowLeft, FaArrowRightFromBracket } from 'react-icons/fa6';
 import { memo } from 'react';
+import UserProfile from '@/components/UserProfile';
 
 const Header = memo(() => {
   const { logout } = useLogout();
-  const { user } = useAuthStore();
-  const { setChatsListOpen, otherUser, chatsListOpen } = useChatStore();
+  const { setChatsListOpen, chatsListOpen } = useChatStore();
 
   const toggleChatsListOpen = () => setChatsListOpen(!chatsListOpen);
-
-  const isMobile = useBreakpointValue({ base: true, md: false });
-
-  const userDataToUse = isMobile && !chatsListOpen ? otherUser : user;
 
   return (
     <Stack
@@ -47,12 +34,7 @@ const Header = memo(() => {
           />
         </Show>
       )}
-      {userDataToUse && (
-        <HStack spacing={3}>
-          <Avatar name={userDataToUse?.name} size="sm" />
-          <Text fontWeight="semibold">{userDataToUse?.name}</Text>
-        </HStack>
-      )}
+      <UserProfile />
 
       <HStack ml={'auto'} spacing={3}>
         <Show breakpoint="(max-width: 767px)">
