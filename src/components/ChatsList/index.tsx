@@ -1,21 +1,21 @@
 import { Button } from '@/components';
-import type { User } from '@/types/User';
 import { Box, Divider } from '@chakra-ui/react';
 import type { Chat } from '@/types/Chat.ts';
 import ListContent from '@/components/ChatsList/ListContent';
 import { useAuthStore, useChatStore } from '@/store';
 import { memo, useCallback } from 'react';
+import { type UseChatOutput } from '@/pages/Chat/useChat.ts';
 
 const ChatsList = memo(
   ({
-    chatsLoading,
-    usersLoading,
     isCreatingChat,
     startCreatingChat,
     stopCreatingChat,
+    chatsQuery,
+    usersQuery,
     ...rest
   }: ChatsListProps) => {
-    const loading = isCreatingChat ? usersLoading : chatsLoading;
+    const loading = isCreatingChat ? usersQuery.isLoading : chatsQuery.isLoading;
     const { user } = useAuthStore();
     const { setSelectedChat } = useChatStore();
     const { setChatsListOpen, chatsListOpen } = useChatStore();
@@ -49,6 +49,8 @@ const ChatsList = memo(
             isCreatingChat={isCreatingChat}
             userId={user?._id}
             handleSelect={handleSelect}
+            chatsQuery={chatsQuery}
+            usersQuery={usersQuery}
             {...rest}
           />
         </Box>
@@ -60,10 +62,8 @@ const ChatsList = memo(
 export default ChatsList;
 
 export interface ChatsListProps {
-  chats: Chat[];
-  users: User[];
-  chatsLoading: boolean;
-  usersLoading: boolean;
+  chatsQuery: UseChatOutput['chatsQuery'];
+  usersQuery: UseChatOutput['usersQuery'];
   isCreatingChat: boolean;
   startCreatingChat: () => void;
   stopCreatingChat: () => void;

@@ -8,7 +8,13 @@ interface ChatStore {
   selectedChat: Chat | null;
   messages: ChatMessage[];
   messagesLoading: boolean;
+  fetchNextMessagesPage: () => void;
+  isFetchingNextMessagesPage: boolean;
+  hasNextMessagesPage: boolean;
   otherUser: User | null;
+  setFetchNextMessagesPage: (fetchNextMessagesPage: () => void) => void;
+  setHasNextMessagesPage: (hasNextMessagesPage: boolean) => void;
+  setIsFetchingNextMessagesPage: (isFetchingNextMessagesPage: boolean) => void;
   setOtherUser: (otherUser: User | null) => void;
   setSelectedChat: (chat: Chat | null) => void;
   setMessages: (messages: ChatMessage[] | ((prev: ChatMessage[]) => ChatMessage[])) => void;
@@ -21,6 +27,9 @@ interface ChatStore {
 }
 
 const defaultState = {
+  fetchNextMessagesPage: () => {},
+  isFetchingNextMessagesPage: false,
+  hasNextMessagesPage: false,
   selectedChat: null,
   messages: [],
   messagesLoading: false,
@@ -50,6 +59,10 @@ export const chatStore = createStore<ChatStore>()((set) => ({
       messages: typeof nextMessages === 'function' ? nextMessages(state.messages) : nextMessages,
     })),
   setMessagesLoading: (messagesLoading) => set({ messagesLoading }),
+  setFetchNextMessagesPage: (fetchNextMessagesPage) => set({ fetchNextMessagesPage }),
+  setIsFetchingNextMessagesPage: (isFetchingNextMessagesPage) =>
+    set({ isFetchingNextMessagesPage }),
+  setHasNextMessagesPage: (hasNextMessagesPage) => set({ hasNextMessagesPage }),
   reset: () => set(defaultState),
 }));
 

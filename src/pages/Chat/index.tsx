@@ -4,19 +4,17 @@ import useChat from './useChat.ts';
 
 const Chat = () => {
   const {
-    users = [],
-    usersLoading,
     startCreatingChat,
     stopCreatingChat,
     isCreatingChat,
-    chats,
-    chatsLoading,
     createChat,
     chatCreationInProgress,
     onMessageInputTextChange,
     messageInputText,
     handleSendMessage,
     isSendingMessage,
+    chatsQuery,
+    usersQuery,
   } = useChat();
 
   return (
@@ -26,13 +24,11 @@ const Chat = () => {
         <ChatSidebar
           createChat={createChat}
           stopCreatingChat={stopCreatingChat}
-          chats={chats}
           chatCreationInProgress={chatCreationInProgress}
-          users={users}
-          chatsLoading={chatsLoading}
-          usersLoading={usersLoading}
           isCreatingChat={isCreatingChat}
           startCreatingChat={startCreatingChat}
+          chatsQuery={chatsQuery}
+          usersQuery={usersQuery}
         />
         <ChatView
           onMessageInputTextChange={onMessageInputTextChange}

@@ -3,7 +3,7 @@ import { useQuery } from '@tanstack/react-query';
 import type { PaginatedData } from '@/types/PaginatedData.ts';
 import type { ChatMessage } from '@/types/ChatMessage.ts';
 
-const chatMessages = async (chatId: string) => {
+const getChatMessages = async (chatId: string) => {
   const api = getApi();
 
   return api.get<PaginatedData<ChatMessage>>(`/messages/${chatId}`, { params: { limit: 40 } });
@@ -14,7 +14,7 @@ const useChatMessages = (params: ChatMessagesParams) => {
 
   return useQuery({
     queryKey: ['chat-messages', chatId],
-    queryFn: () => chatMessages(chatId!),
+    queryFn: () => getChatMessages(chatId!),
     enabled: !!chatId,
   });
 };

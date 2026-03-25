@@ -1,16 +1,16 @@
-import { type ChangeEvent, useCallback, useEffect, useRef, useState } from 'react';
+import { type ChangeEvent, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import {
   emitTypingStart,
   emitTypingStop,
-  useChatMessages,
-  useChats,
   useChatSocket,
   useCreateChatMutation,
   useSendMessageMutation,
-  useUsers,
 } from '@/api';
 import { useAuthStore, useChatStore } from '@/store';
 import type { User } from '@/types/User.ts';
+import useInfiniteChats from '@/api/http/queries/useInfiniteChats.ts';
+import useInfiniteUsers from '@/api/http/queries/useInfiniteUsers.ts';
+import useInfiniteChatMessages from '@/api/http/queries/useInfiniteChatMessages.ts';
 
 const useChat = () => {
   const [isCreatingChat, setIsCreatingChat] = useState(false);
@@ -18,20 +18,52 @@ const useChat = () => {
   const [isTyping, setIsTyping] = useState(false);
   const typingStopTimer = useRef<NodeJS.Timeout | null>(null);
 
-  const { selectedChat, otherUser, setMessages, setMessagesLoading, setOtherUser } = useChatStore();
+  const {
+    selectedChat,
+    otherUser,
+    setMessages,
+    setMessagesLoading,
+    setOtherUser,
+    setFetchNextMessagesPage,
+    setHasNextMessagesPage,
+    setIsFetchingNextMessagesPage,
+  } = useChatStore();
 
   const { user } = useAuthStore();
 
-  const { data: chatMessagesData, isLoading: chatMessagesLoading } = useChatMessages({
+  const {
+    data: chatMessagesData,
+    isLoading: chatMessagesLoading,
+    isFetchingNextPage: isFetchingNextMessagesPage,
+    fetchNextPage: fetchNextMessagesPage,
+    hasNextPage: hasNextMessagesPage,
+  } = useInfiniteChatMessages({
     chatId: selectedChat?._id,
   });
+  const chatMessagesPages = chatMessagesData?.pages;
+  const chatMessages = useMemo(
+    () => chatMessagesPages?.flatMap((page) => page.data.data) ?? [],
+    [chatMessagesPages],
+  );
+
+  useEffect(() => {
+    setFetchNextMessagesPage(fetchNextMessagesPage);
+    setIsFetchingNextMessagesPage(isFetchingNextMessagesPage);
+    setHasNextMessagesPage(hasNextMessagesPage);
+  }, [
+    fetchNextMessagesPage,
+    isFetchingNextMessagesPage,
+    hasNextMessagesPage,
+    setFetchNextMessagesPage,
+    setIsFetchingNextMessagesPage,
+    setHasNextMessagesPage,
+  ]);
 
   const { mutateAsync: sendMessage, isPending: isSendingMessage } = useSendMessageMutation();
 
   useEffect(() => {
     if (selectedChat) {
-      const messagesArray = chatMessagesData?.data?.data ?? [];
-      setMessages(messagesArray);
+      setMessages(chatMessages);
       setMessagesLoading(chatMessagesLoading);
 
       const foundOtherUser = selectedChat.participants?.find(
@@ -43,7 +75,7 @@ const useChat = () => {
       }
     }
   }, [
-    chatMessagesData,
+    chatMessages,
     chatMessagesLoading,
     selectedChat,
     user?._id,
@@ -108,11 +140,26 @@ const useChat = () => {
     setMessageInputText('');
   };
 
-  const { data: chatsData, isLoading: chatsLoading, refetch: refetchChats } = useChats();
-  const chats = chatsData?.data?.data ?? [];
+  const {
+    data: chatsData,
+    isLoading: chatsLoading,
+    refetch: refetchChats,
+    fetchNextPage: fetchNextChatsPage,
+    isFetchingNextPage: isFetchingNextChatsPage,
+    hasNextPage: hasNextPageChats,
+  } = useInfiniteChats();
+  const chatsPages = chatsData?.pages;
+  const chats = chatsPages?.flatMap((page) => page.data.data) ?? [];
 
-  const { data: usersData, isLoading: usersLoading } = useUsers();
-  const users = usersData?.data?.data ?? [];
+  const {
+    data: usersData,
+    isLoading: usersLoading,
+    fetchNextPage: fetchNextUsersPage,
+    isFetchingNextPage: isFetchingNextUsersPage,
+    hasNextPage: hasNextPageUsers,
+  } = useInfiniteUsers();
+  const usersPages = usersData?.pages;
+  const users = usersPages?.flatMap((page) => page.data.data) ?? [];
 
   const { mutateAsync: createChatMutation, isPending: creatingChat } = useCreateChatMutation();
 
@@ -129,10 +176,20 @@ const useChat = () => {
   );
 
   return {
-    chats,
-    chatsLoading,
-    users,
-    usersLoading,
+    chatsQuery: {
+      data: chats,
+      isLoading: chatsLoading,
+      fetchNextPage: fetchNextChatsPage,
+      isFetchingNextPage: isFetchingNextChatsPage,
+      hasNextPage: hasNextPageChats,
+    },
+    usersQuery: {
+      data: users,
+      isLoading: usersLoading,
+      fetchNextPage: fetchNextUsersPage,
+      isFetching: isFetchingNextUsersPage,
+      hasNextPage: hasNextPageUsers,
+    },
     startCreatingChat,
     stopCreatingChat,
     isCreatingChat,
@@ -146,3 +203,5 @@ const useChat = () => {
 };
 
 export default useChat;
+
+export type UseChatOutput = ReturnType<typeof useChat>;

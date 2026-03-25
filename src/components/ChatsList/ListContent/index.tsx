@@ -1,26 +1,29 @@
 import { Center, Spinner } from '@chakra-ui/react';
 import EmptyState from '@/components/ChatsList/ListContent/EmptyState.tsx';
 import UsersView from '@/components/ChatsList/ListContent/UsersView.tsx';
-import type { User } from '@/types/User.ts';
 import ChatsView from '@/components/ChatsList/ListContent/ChatsView.tsx';
 import type { Chat } from '@/types/Chat.ts';
+import type { UseChatOutput } from '@/pages/Chat/useChat.ts';
 
 const ListContent = (props: ListContentProps) => {
   const {
     loading,
     isCreatingChat,
-    users,
-    chats,
+    chatsQuery,
+    usersQuery,
     chatCreationInProgress,
     userId,
     createChat,
     handleSelect,
   } = props;
 
+  const { data: users } = usersQuery;
+  const { data: chats } = chatsQuery;
+
   if (loading) {
     return (
       <Center py={6}>
-        <Spinner />
+        <Spinner color={'brand.500'} />
       </Center>
     );
   }
@@ -30,7 +33,7 @@ const ListContent = (props: ListContentProps) => {
       <EmptyState message="Nenhum usuário disponível para iniciar uma conversa." />
     ) : (
       <UsersView
-        users={users}
+        usersQuery={usersQuery}
         chatCreationInProgress={chatCreationInProgress}
         createChat={createChat}
       />
@@ -40,7 +43,7 @@ const ListContent = (props: ListContentProps) => {
   return chats.length === 0 ? (
     <EmptyState message="Você ainda não possui conversas. Clique em 'Nova conversa' para começar." />
   ) : (
-    <ChatsView handleSelect={handleSelect} chats={chats} userId={userId} />
+    <ChatsView chatsQuery={chatsQuery} handleSelect={handleSelect} userId={userId} />
   );
 };
 
@@ -49,8 +52,8 @@ export default ListContent;
 export interface ListContentProps {
   loading: boolean;
   isCreatingChat: boolean;
-  users: User[];
-  chats: Chat[];
+  chatsQuery: UseChatOutput['chatsQuery'];
+  usersQuery: UseChatOutput['usersQuery'];
   userId?: string;
   chatCreationInProgress: boolean;
   createChat: (recipientId: string) => void;

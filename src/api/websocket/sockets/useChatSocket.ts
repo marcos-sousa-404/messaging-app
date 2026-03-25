@@ -12,13 +12,14 @@ import {
   onUserStatus,
   onUserTyping,
 } from '../events/chatEvents';
-import { useQueryClient } from '@tanstack/react-query';
+import { type InfiniteData, useQueryClient } from '@tanstack/react-query';
 import { usePlaySound } from '@/hooks';
 import notificationSound from '@/assets/sounds/new-notification.mp3';
 import { useAuthStore, useChatStore } from '@/store';
 import { chatStore } from '@/store/useChatStore.ts';
 import type { ChatMessage } from '@/types/ChatMessage.ts';
 import type { UserStatusData, UserTypingData } from '@/api/websocket/sockets/types.ts';
+import type { PaginatedData } from '@/types/PaginatedData.ts';
 
 const useChatSocket = (chatId?: string) => {
   const [isConnected, setIsConnected] = useState(false);
@@ -58,8 +59,26 @@ const useChatSocket = (chatId?: string) => {
         playNotificationSound();
       }
 
-      void queryClient.invalidateQueries({ queryKey: ['chat-messages', incomingChatId] });
-      void queryClient.invalidateQueries({ queryKey: ['chats'] });
+      queryClient.setQueryData(
+        ['infinite-chat-messages', incomingChatId],
+        (oldData: InfiniteData<PaginatedData<ChatMessage>> | undefined) => {
+          if (!oldData?.pages?.length) return oldData;
+
+          const newPages = [...oldData.pages];
+
+          newPages[0] = {
+            ...newPages[0],
+            data: [data, ...newPages[0].data],
+          };
+
+          return {
+            ...oldData,
+            pages: newPages,
+          };
+        },
+      );
+
+      void queryClient.invalidateQueries({ queryKey: ['infinite-chats'] });
     };
 
     const handleUserTyping = (data: UserTypingData) => {

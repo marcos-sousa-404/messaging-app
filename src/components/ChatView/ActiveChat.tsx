@@ -1,5 +1,5 @@
-import { memo, useEffect, useRef } from 'react';
-import { Box, Flex, VStack } from '@chakra-ui/react';
+import { memo, useEffect, useLayoutEffect, useRef } from 'react';
+import { Box, Flex, Spinner, VStack } from '@chakra-ui/react';
 import { useAuthStore, useChatStore } from '@/store';
 import ChatMessage from '../ChatMessage';
 import NoMessages from '@/components/ChatView/NoMessages.tsx';
@@ -7,26 +7,64 @@ import Loading from '@/components/ChatView/Loading.tsx';
 import DateMarker from '../DateMarker';
 import shouldShowDateMarker from '@/components/ChatView/shouldShowDateMarker.ts';
 import { TypingIndicator } from '@/components';
+import { useOnScrollEnd } from '@/hooks';
 
 const ActiveChat = memo(() => {
-  const { selectedChat, messages, messagesLoading, typingUserIds, otherUser } = useChatStore();
+  const {
+    selectedChat,
+    messages,
+    messagesLoading,
+    typingUserIds,
+    otherUser,
+    fetchNextMessagesPage,
+    hasNextMessagesPage,
+    isFetchingNextMessagesPage,
+  } = useChatStore();
   const { user } = useAuthStore();
 
   const otherUserIsTyping = otherUser && typingUserIds.includes(otherUser?._id);
 
+  const { scrollRef } = useOnScrollEnd({
+    direction: 'up',
+    onScrollEnd: fetchNextMessagesPage,
+    disable: !hasNextMessagesPage || isFetchingNextMessagesPage,
+  });
+
   const bottomRef = useRef<HTMLDivElement>(null);
 
   const reversedMessages = messages ? [...messages].reverse() : [];
+  const newestMessageId = messages?.[0]?._id;
+  const oldestMessageId = reversedMessages[0]?._id;
+
+  const previousScrollHeight = useRef(0);
+  const previousOldestMessageId = useRef(oldestMessageId);
 
   const scrollToBottom = () => {
     bottomRef.current?.scrollIntoView();
   };
 
+  useLayoutEffect(() => {
+    const container = scrollRef.current;
+    if (!container) return;
+
+    if (
+      oldestMessageId &&
+      previousOldestMessageId.current &&
+      previousOldestMessageId.current !== oldestMessageId
+    ) {
+      const heightDifference = container.scrollHeight - previousScrollHeight.current;
+      container.scrollTop += heightDifference;
+    }
+
+    previousScrollHeight.current = container.scrollHeight;
+    previousOldestMessageId.current = oldestMessageId;
+  }, [reversedMessages.length, oldestMessageId, scrollRef]);
+
   useEffect(() => {
-    if (messages.length > 0) {
+    if (newestMessageId) {
       scrollToBottom();
     }
-  }, [messages]);
+  }, [newestMessageId, selectedChat?._id]);
 
   useEffect(() => {
     if (otherUserIsTyping) {
@@ -45,8 +83,21 @@ const ActiveChat = memo(() => {
   }
 
   return (
-    <Flex overflowY="auto" p={4} direction="column">
+    <Flex
+      ref={scrollRef}
+      as={'div'}
+      overflowY="auto"
+      flex="1 1 auto"
+      minH={0}
+      p={4}
+      direction="column"
+    >
       <VStack spacing={0} align="stretch">
+        {hasNextMessagesPage && (
+          <Box mx={'auto'} py={2} height={'60px'}>
+            {isFetchingNextMessagesPage && <Spinner size={'md'} color={'brand.500'} />}
+          </Box>
+        )}
         {reversedMessages.map((msg, index) => {
           const isSameUserAbove =
             index > 0 && reversedMessages[index - 1].senderId?._id === msg.senderId?._id;

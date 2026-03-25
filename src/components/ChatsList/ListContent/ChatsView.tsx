@@ -5,42 +5,70 @@ import type { Chat } from '@/types/Chat.ts';
 import { getUserProfilePictureUrl } from '@/helpers';
 import useChatStore from '@/store/useChatStore.ts';
 import GenericList from '@/components/GenericList';
-import { memo } from 'react';
+import { memo, useMemo } from 'react';
+import type { UseChatOutput } from '@/pages/Chat/useChat.ts';
+
+const ChatItem = memo(
+  ({ item, userId, handleSelect, selectedChatId, typingUserIds }: ChatItemProps) => {
+    const otherUser = item.participants.find((participant: User) => participant._id !== userId);
+
+    if (!otherUser) return null;
+
+    const avatarUrl = otherUser.image ? getUserProfilePictureUrl(otherUser.image) : null;
+    const isTyping = typingUserIds.includes(otherUser._id);
+    const lastMessage = isTyping
+      ? 'Digitando...'
+      : typeof item.lastMessage === 'string'
+        ? item.lastMessage
+        : item.lastMessage?.text || '';
+
+    return (
+      <Box>
+        <ChatCard
+          name={otherUser.name}
+          lastMessage={lastMessage}
+          avatarUrl={avatarUrl}
+          unreadCount={0}
+          isSelected={selectedChatId === item._id}
+          onClick={() => handleSelect(item)}
+        />
+      </Box>
+    );
+  },
+);
+
+interface ChatItemProps {
+  item: Chat;
+  userId?: string;
+  handleSelect: (chat: Chat) => void;
+  selectedChatId?: string;
+  typingUserIds: string[];
+}
 
 const ChatsView = memo((props: ChatsViewProps) => {
-  const { chats, userId, handleSelect } = props;
+  const { chatsQuery, userId, handleSelect } = props;
+  const { data: chats, hasNextPage, fetchNextPage, isFetchingNextPage } = chatsQuery;
   const { selectedChat, typingUserIds } = useChatStore();
+
+  const itemProps = useMemo(
+    () => ({
+      userId,
+      handleSelect,
+      selectedChatId: selectedChat?._id,
+      typingUserIds,
+    }),
+    [userId, handleSelect, selectedChat?._id, typingUserIds],
+  );
 
   return (
     <GenericList
       items={chats}
       keyExtractor={(chat) => chat._id}
-      renderItem={(chat) => {
-        const otherUser = chat.participants.find((participant: User) => participant._id !== userId);
-
-        if (!otherUser) return null;
-
-        const avatarUrl = otherUser.image ? getUserProfilePictureUrl(otherUser.image) : null;
-        const isTyping = typingUserIds.includes(otherUser._id);
-        const lastMessage = isTyping
-          ? 'Digitando...'
-          : typeof chat.lastMessage === 'string'
-            ? chat.lastMessage
-            : chat.lastMessage?.text || '';
-
-        return (
-          <Box>
-            <ChatCard
-              name={otherUser.name}
-              lastMessage={lastMessage}
-              avatarUrl={avatarUrl}
-              unreadCount={0}
-              isSelected={selectedChat?._id === chat._id}
-              onClick={() => handleSelect(chat)}
-            />
-          </Box>
-        );
-      }}
+      hasNextPage={hasNextPage}
+      fetchNextPage={fetchNextPage}
+      isFetchingNextPage={isFetchingNextPage}
+      ItemComponent={ChatItem}
+      itemProps={itemProps}
     />
   );
 });
@@ -48,7 +76,7 @@ const ChatsView = memo((props: ChatsViewProps) => {
 export default ChatsView;
 
 export interface ChatsViewProps {
-  chats: Chat[];
+  chatsQuery: UseChatOutput['chatsQuery'];
   userId?: string;
   handleSelect: (chat: Chat) => void;
 }
