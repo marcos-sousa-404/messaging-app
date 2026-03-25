@@ -20,6 +20,7 @@ import { chatStore } from '@/store/useChatStore.ts';
 import type { ChatMessage } from '@/types/ChatMessage.ts';
 import type { UserStatusData, UserTypingData } from '@/api/websocket/sockets/types.ts';
 import type { PaginatedData } from '@/types/PaginatedData.ts';
+import type { Chat } from '@/types/Chat.ts';
 
 const useChatSocket = (chatId?: string) => {
   const [isConnected, setIsConnected] = useState(false);
@@ -68,7 +69,7 @@ const useChatSocket = (chatId?: string) => {
 
           newPages[0] = {
             ...newPages[0],
-            data: [data, ...newPages[0].data],
+            data: [data, ...(newPages[0].data || [])],
           };
 
           return {
@@ -78,7 +79,50 @@ const useChatSocket = (chatId?: string) => {
         },
       );
 
-      void queryClient.invalidateQueries({ queryKey: ['infinite-chats'] });
+      queryClient.setQueryData(
+        ['infinite-chats'],
+        (oldData: InfiniteData<PaginatedData<Chat>> | undefined) => {
+          if (!oldData?.pages?.length) return oldData;
+
+          const newPages = oldData.pages.map((page) => ({
+            ...page,
+            data: [...(page.data || [])],
+          }));
+
+          let foundChat: Chat | undefined;
+          let foundPageIndex = -1;
+          let foundChatIndex = -1;
+
+          for (let p = 0; p < newPages.length; p++) {
+            const chatIndex = newPages[p].data.findIndex((c) => c._id === incomingChatId);
+            if (chatIndex !== -1) {
+              foundChat = newPages[p].data[chatIndex];
+              foundPageIndex = p;
+              foundChatIndex = chatIndex;
+              break;
+            }
+          }
+
+          if (foundChat) {
+            newPages[foundPageIndex].data.splice(foundChatIndex, 1);
+
+            const updatedChat = {
+              ...foundChat,
+              lastMessage: data,
+              updatedAt: data.createdAt,
+            };
+
+            newPages[0].data.unshift(updatedChat);
+          } else {
+            void queryClient.invalidateQueries({ queryKey: ['infinite-chats'] });
+          }
+
+          return {
+            ...oldData,
+            pages: newPages,
+          };
+        },
+      );
     };
 
     const handleUserTyping = (data: UserTypingData) => {
