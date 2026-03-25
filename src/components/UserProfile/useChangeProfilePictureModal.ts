@@ -7,11 +7,12 @@ import { useEffect } from 'react';
 const useChangeProfilePictureModal = (params: UseChangeProfilePictureModalParams) => {
   const { onClose, userId, isOpen } = params;
   const { openFilePicker, filesContent, clear } = useFilePicker({
-    accept: '.png,.jpg,.jpeg',
+    accept: '.png,.jpg',
     readAs: 'DataURL',
   });
   const { mutateAsync: updateUser, isPending: isSaving } = useUpdateUserMutation();
-  const selectedImageUrl = filesContent?.[0]?.content;
+  const selectedImage = filesContent?.[0];
+  const selectedImageUrl = selectedImage?.content;
 
   useEffect(() => {
     if (!isOpen) clear();
@@ -19,8 +20,11 @@ const useChangeProfilePictureModal = (params: UseChangeProfilePictureModalParams
 
   const handleSave = async () => {
     const imageBlob = await dataURLtoBlob(selectedImageUrl);
+    const fileToUpload = new File([imageBlob], selectedImage.name, {
+      type: imageBlob.type || 'image/jpeg',
+    });
 
-    await updateUser({ id: userId, image: imageBlob });
+    await updateUser({ id: userId, image: fileToUpload });
     onClose();
   };
 
