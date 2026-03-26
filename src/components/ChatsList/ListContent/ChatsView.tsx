@@ -2,7 +2,6 @@ import { ChatCard } from '@/components';
 import { Box } from '@chakra-ui/react';
 import type { User } from '@/types/User.ts';
 import type { Chat } from '@/types/Chat.ts';
-import { getUserProfilePictureUrl } from '@/helpers';
 import useChatStore from '@/store/useChatStore.ts';
 import GenericList from '@/components/GenericList';
 import { memo, useMemo } from 'react';
@@ -14,7 +13,7 @@ const ChatItem = memo(
 
     if (!otherUser) return null;
 
-    const avatarUrl = otherUser.image ? getUserProfilePictureUrl(otherUser.image) : null;
+    const avatarUrl = otherUser.image ? otherUser.image : null;
     const isTyping = typingUserIds.includes(otherUser._id);
     const lastMessage = isTyping
       ? 'Digitando...'

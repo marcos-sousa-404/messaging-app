@@ -1,13 +1,12 @@
 import { Box } from '@chakra-ui/react';
 import { UserCard } from '@/components';
-import { getUserProfilePictureUrl } from '@/helpers';
 import GenericList from '@/components/GenericList';
 import { memo, useMemo } from 'react';
 import type { UseChatOutput } from '@/pages/Chat/useChat.ts';
 import type { User } from '@/types/User.ts';
 
 const UserItem = memo(({ item, chatCreationInProgress, createChat }: UserItemProps) => {
-  const avatarUrl = item.image ? getUserProfilePictureUrl(item.image) : null;
+  const avatarUrl = item.image ? item.image : null;
 
   return (
     <Box

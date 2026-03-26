@@ -2,6 +2,8 @@ import getApi from '@/api/http/getApi.ts';
 import { useMutation } from '@tanstack/react-query';
 import useToast from '@/hooks/useToast.ts';
 import type { ApiError } from '@/types/ApiError.ts';
+import { useAuthStore } from '@/store';
+import type { User } from '@/types/User';
 
 const updateUser = async (payload: UpdateUserPayload) => {
   const api = getApi();
@@ -11,16 +13,19 @@ const updateUser = async (payload: UpdateUserPayload) => {
     formData.append('image', payload.image);
   }
 
-  return api.post(`/users/edit/${payload.id}`, formData);
+  return api.post<{ user: User }>(`/users/edit/${payload.id}`, formData);
 };
 
 const useUpdateUserMutation = () => {
   const showToast = useToast();
+  const { setUser } = useAuthStore();
 
   return useMutation({
     mutationKey: ['update-user'],
     mutationFn: updateUser,
-    onSuccess: () => {
+    onSuccess: (userData) => {
+      setUser(userData?.data?.user ?? null);
+
       showToast({
         title: 'Usuário atualizado com sucesso!',
         status: 'success',
