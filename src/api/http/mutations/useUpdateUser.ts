@@ -11,7 +11,7 @@ const updateUser = async (payload: UpdateUserPayload) => {
     formData.append('image', payload.image);
   }
 
-  return api.patch(`/users/edit/${payload.id}`, formData);
+  return api.post(`/users/edit/${payload.id}`, formData);
 };
 
 const useUpdateUserMutation = () => {
