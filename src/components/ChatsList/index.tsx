@@ -1,10 +1,10 @@
-import { Button } from '@/components';
 import { Box, Divider } from '@chakra-ui/react';
 import type { Chat } from '@/types/Chat.ts';
 import ListContent from '@/components/ChatsList/ListContent';
 import { useAuthStore, useChatStore } from '@/store';
-import { memo, useCallback } from 'react';
+import { type ChangeEvent, memo, useCallback } from 'react';
 import { type UseChatOutput } from '@/pages/Chat/useChat.ts';
+import ListHeader from '@/components/ChatsList/ListHeader';
 
 const ChatsList = memo(
   ({
@@ -13,6 +13,8 @@ const ChatsList = memo(
     stopCreatingChat,
     chatsQuery,
     usersQuery,
+    searchQuery,
+    onSearchChange,
     ...rest
   }: ChatsListProps) => {
     const loading = isCreatingChat ? usersQuery.isLoading : chatsQuery.isLoading;
@@ -30,17 +32,13 @@ const ChatsList = memo(
 
     return (
       <Box h="100%" w="100%" display="flex" flexDirection="column">
-        <Box p={3}>
-          <Button
-            size="sm"
-            width="full"
-            onClick={isCreatingChat ? stopCreatingChat : startCreatingChat}
-            colorScheme={isCreatingChat ? 'red' : 'brand'}
-          >
-            {isCreatingChat ? 'Cancelar' : 'Nova conversa'}
-          </Button>
-        </Box>
-
+        <ListHeader
+          isCreatingChat={isCreatingChat}
+          searchQuery={searchQuery}
+          onSearchChange={onSearchChange}
+          startCreatingChat={startCreatingChat}
+          stopCreatingChat={stopCreatingChat}
+        />
         <Divider />
 
         <Box p={3} py={2} flex={1} overflowY="auto">
@@ -69,4 +67,6 @@ export interface ChatsListProps {
   stopCreatingChat: () => void;
   createChat: (recipientId: string) => void;
   chatCreationInProgress: boolean;
+  searchQuery: string;
+  onSearchChange: (event: ChangeEvent<HTMLInputElement>) => void;
 }

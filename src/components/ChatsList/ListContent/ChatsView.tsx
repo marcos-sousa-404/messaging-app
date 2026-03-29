@@ -27,7 +27,6 @@ const ChatItem = memo(
           name={otherUser.name}
           lastMessage={lastMessage}
           avatarUrl={avatarUrl}
-          unreadCount={0}
           isSelected={selectedChatId === item._id}
           onClick={() => handleSelect(item)}
         />

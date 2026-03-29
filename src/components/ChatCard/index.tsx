@@ -1,8 +1,9 @@
 import {
   Avatar,
-  Badge,
+  Box,
   Card,
   CardBody,
+  Circle,
   HStack,
   Text,
   useColorModeValue,
@@ -10,11 +11,12 @@ import {
 } from '@chakra-ui/react';
 
 const ChatCard = (props: ChatCardProps) => {
-  const { name, avatarUrl, lastMessage, unreadCount = 0, isSelected, onClick } = props;
+  const { name, avatarUrl, lastMessage, hasUnreadMessages, isSelected, onClick } = props;
 
   const bg = useColorModeValue('white', 'gray.800');
   const hoverColor = useColorModeValue('gray.100', 'gray.700');
   const messageColor = useColorModeValue('gray.500', 'gray.400');
+  const dotColor = useColorModeValue('green.500', 'green.300');
 
   return (
     <Card
@@ -37,10 +39,10 @@ const ChatCard = (props: ChatCardProps) => {
             </Text>
           </VStack>
 
-          {unreadCount > 0 && (
-            <Badge colorScheme="green" borderRadius="full" px={2}>
-              {unreadCount}
-            </Badge>
+          {hasUnreadMessages && (
+            <Box pr={1}>
+              <Circle size="10px" bg={dotColor} />
+            </Box>
           )}
         </HStack>
       </CardBody>
@@ -54,7 +56,7 @@ export interface ChatCardProps {
   name: string;
   avatarUrl?: string | null;
   lastMessage: string;
-  unreadCount?: number;
+  hasUnreadMessages?: boolean;
   isSelected?: boolean;
   onClick?: () => void;
 }

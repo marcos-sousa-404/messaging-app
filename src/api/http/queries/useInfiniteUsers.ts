@@ -6,23 +6,30 @@ import type { InfiniteQueryFnParams } from '@/types/InfiniteQueryFnParams.ts';
 import { getApiPaginationParams } from '@/helpers';
 import getNextPageParam from '@/helpers/getNextPageParam.ts';
 
-const getUsers = async (queryFnParams: InfiniteQueryFnParams) => {
+const getUsers = async (queryFnParams: UseInfiniteUsersParams & InfiniteQueryFnParams) => {
   const api = getApi();
 
   const paginationParams = getApiPaginationParams(queryFnParams);
 
   return api.get<PaginatedData<User>>('/users', {
-    params: paginationParams,
+    params: {
+      ...paginationParams,
+      search: queryFnParams.search,
+    },
   });
 };
 
-const useInfiniteUsers = () => {
+const useInfiniteUsers = (params: UseInfiniteUsersParams) => {
   return useInfiniteQuery({
-    queryKey: ['infinite-users'],
+    queryKey: ['infinite-users', params.search],
     initialPageParam: 1,
-    queryFn: getUsers,
+    queryFn: (baseParams) => getUsers({ ...baseParams, ...params }),
     getNextPageParam: (lastPage) => getNextPageParam(lastPage),
   });
 };
 
 export default useInfiniteUsers;
+
+export interface UseInfiniteUsersParams {
+  search?: string;
+}

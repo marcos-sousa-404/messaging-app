@@ -15,6 +15,8 @@ const Chat = () => {
     isSendingMessage,
     chatsQuery,
     usersQuery,
+    onSearchChange,
+    searchQuery,
   } = useChat();
 
   return (
@@ -29,6 +31,8 @@ const Chat = () => {
           startCreatingChat={startCreatingChat}
           chatsQuery={chatsQuery}
           usersQuery={usersQuery}
+          onSearchChange={onSearchChange}
+          searchQuery={searchQuery}
         />
         <ChatView
           onMessageInputTextChange={onMessageInputTextChange}

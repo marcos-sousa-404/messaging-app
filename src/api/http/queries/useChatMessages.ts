@@ -9,7 +9,7 @@ const getChatMessages = async (chatId: string) => {
   return api.get<PaginatedData<ChatMessage>>(`/messages/${chatId}`, { params: { limit: 40 } });
 };
 
-const useChatMessages = (params: ChatMessagesParams) => {
+const useChatMessages = (params: UseChatMessagesParams) => {
   const { chatId } = params;
 
   return useQuery({
@@ -21,6 +21,6 @@ const useChatMessages = (params: ChatMessagesParams) => {
 
 export default useChatMessages;
 
-export type ChatMessagesParams = {
+export type UseChatMessagesParams = {
   chatId?: string;
 };

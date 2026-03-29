@@ -18,6 +18,9 @@ const useChat = () => {
   const [isTyping, setIsTyping] = useState(false);
   const typingStopTimer = useRef<NodeJS.Timeout | null>(null);
 
+  const [searchQuery, setSearchQuery] = useState('');
+  const [debouncedSearch, setDebouncedSearch] = useState('');
+
   const {
     selectedChat,
     otherUser,
@@ -30,6 +33,18 @@ const useChat = () => {
   } = useChatStore();
 
   const { user } = useAuthStore();
+
+  useEffect(() => {
+    const handler = setTimeout(() => {
+      setDebouncedSearch(searchQuery);
+    }, 500);
+
+    return () => clearTimeout(handler);
+  }, [searchQuery]);
+
+  const onSearchChange = (event: ChangeEvent<HTMLInputElement>) => {
+    setSearchQuery(event.target.value);
+  };
 
   const {
     data: chatMessagesData,
@@ -147,7 +162,9 @@ const useChat = () => {
     fetchNextPage: fetchNextChatsPage,
     isFetchingNextPage: isFetchingNextChatsPage,
     hasNextPage: hasNextPageChats,
-  } = useInfiniteChats();
+  } = useInfiniteChats({
+    search: !isCreatingChat ? debouncedSearch : '',
+  });
   const chatsPages = chatsData?.pages;
   const chats = chatsPages?.flatMap((page) => page.data.data) ?? [];
 
@@ -157,14 +174,30 @@ const useChat = () => {
     fetchNextPage: fetchNextUsersPage,
     isFetchingNextPage: isFetchingNextUsersPage,
     hasNextPage: hasNextPageUsers,
-  } = useInfiniteUsers();
+  } = useInfiniteUsers({
+    search: isCreatingChat ? debouncedSearch : '',
+  });
   const usersPages = usersData?.pages;
   const users = usersPages?.flatMap((page) => page.data.data) ?? [];
 
   const { mutateAsync: createChatMutation, isPending: creatingChat } = useCreateChatMutation();
 
-  const startCreatingChat = useCallback(() => setIsCreatingChat(true), [setIsCreatingChat]);
-  const stopCreatingChat = useCallback(() => setIsCreatingChat(false), [setIsCreatingChat]);
+  const toggleIsCreatingChat = useCallback(() => {
+    setSearchQuery('');
+    setDebouncedSearch('');
+    setIsCreatingChat((prev) => !prev);
+  }, [setSearchQuery, setDebouncedSearch, setIsCreatingChat]);
+
+  const startCreatingChat = useCallback(() => {
+    if (isCreatingChat) return;
+
+    toggleIsCreatingChat();
+  }, [isCreatingChat, toggleIsCreatingChat]);
+  const stopCreatingChat = useCallback(() => {
+    if (!isCreatingChat) return;
+
+    toggleIsCreatingChat();
+  }, [isCreatingChat, toggleIsCreatingChat]);
 
   const createChat = useCallback(
     async (recipientId: string) => {
@@ -190,6 +223,8 @@ const useChat = () => {
       isFetching: isFetchingNextUsersPage,
       hasNextPage: hasNextPageUsers,
     },
+    searchQuery,
+    onSearchChange,
     startCreatingChat,
     stopCreatingChat,
     isCreatingChat,

@@ -6,23 +6,30 @@ import type { InfiniteQueryFnParams } from '@/types/InfiniteQueryFnParams.ts';
 import { getApiPaginationParams } from '@/helpers';
 import getNextPageParam from '@/helpers/getNextPageParam.ts';
 
-const getChats = async (queryFnParams: InfiniteQueryFnParams) => {
+const getChats = async (queryFnParams: UseInfiniteChatsParams & InfiniteQueryFnParams) => {
   const api = getApi();
 
   const paginationParams = getApiPaginationParams(queryFnParams);
 
   return api.get<PaginatedData<Chat>>('/conversations', {
-    params: paginationParams,
+    params: {
+      ...paginationParams,
+      search: queryFnParams.search,
+    },
   });
 };
 
-const useInfiniteChats = () => {
+const useInfiniteChats = (params: UseInfiniteChatsParams) => {
   return useInfiniteQuery({
-    queryKey: ['infinite-chats'],
+    queryKey: ['infinite-chats', params.search],
     initialPageParam: 1,
-    queryFn: getChats,
+    queryFn: (baseParams) => getChats({ ...baseParams, ...params }),
     getNextPageParam: (lastPage) => getNextPageParam(lastPage),
   });
 };
 
 export default useInfiniteChats;
+
+export interface UseInfiniteChatsParams {
+  search?: string;
+}

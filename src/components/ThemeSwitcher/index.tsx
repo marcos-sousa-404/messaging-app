@@ -13,7 +13,7 @@ const ThemeSwitcher = () => {
   };
 
   return (
-    <Button size={{ base: 'sm', xl: 'md' }} onClick={handleToggleColorMode}>
+    <Button size={'sm'} onClick={handleToggleColorMode}>
       {colorMode === 'light' ? <SunIcon /> : <MoonIcon />}
     </Button>
   );
