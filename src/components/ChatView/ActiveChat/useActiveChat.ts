@@ -1,4 +1,4 @@
-import { useEffect, useLayoutEffect, useRef, useState } from 'react';
+import { useEffect, useLayoutEffect, useRef, useState, useCallback } from 'react';
 import { useAuthStore, useChatStore } from '@/store';
 import { useOnScrollEnd } from '@/hooks';
 
@@ -17,8 +17,6 @@ const useActiveChat = () => {
 
   const [previewImage, setPreviewImage] = useState<{ src: string; alt?: string } | null>(null);
 
-  const otherUserIsTyping = !!otherUser && typingUserIds.includes(otherUser._id);
-
   const { scrollRef } = useOnScrollEnd({
     direction: 'up',
     onScrollEnd: fetchNextMessagesPage,
@@ -26,17 +24,16 @@ const useActiveChat = () => {
   });
 
   const bottomRef = useRef<HTMLDivElement>(null);
+  const previousScrollHeight = useRef(0);
+  const previousOldestMessageId = useRef<string | undefined>(undefined);
 
   const reversedMessages = messages ? [...messages].reverse() : [];
   const newestMessageId = messages?.[0]?._id;
   const oldestMessageId = reversedMessages[0]?._id;
 
-  const previousScrollHeight = useRef(0);
-  const previousOldestMessageId = useRef(oldestMessageId);
-
-  const scrollToBottom = () => {
-    bottomRef.current?.scrollIntoView();
-  };
+  const scrollToBottom = useCallback((behavior: ScrollBehavior = 'auto') => {
+    bottomRef.current?.scrollIntoView({ behavior });
+  }, []);
 
   useLayoutEffect(() => {
     const container = scrollRef.current;
@@ -48,30 +45,48 @@ const useActiveChat = () => {
       previousOldestMessageId.current !== oldestMessageId
     ) {
       const heightDifference = container.scrollHeight - previousScrollHeight.current;
-      container.scrollTop += heightDifference;
+      container.scrollTop = heightDifference;
     }
 
     previousScrollHeight.current = container.scrollHeight;
     previousOldestMessageId.current = oldestMessageId;
-  }, [reversedMessages.length, oldestMessageId, scrollRef]);
+  }, [oldestMessageId, scrollRef]);
+
+  useEffect(() => {
+    const container = scrollRef.current;
+    if (!container) return;
+
+    const resizeObserver = new ResizeObserver(() => {
+      const isNearBottom =
+        container.scrollHeight - container.scrollTop - container.clientHeight < 150;
+
+      if (isNearBottom) {
+        scrollToBottom();
+      }
+    });
+
+    resizeObserver.observe(container);
+    return () => resizeObserver.disconnect();
+  }, [scrollToBottom, scrollRef]);
 
   useEffect(() => {
     if (newestMessageId) {
       scrollToBottom();
     }
-  }, [newestMessageId, selectedChat?._id]);
+  }, [newestMessageId, selectedChat?._id, scrollToBottom]);
 
   useEffect(() => {
+    const otherUserIsTyping = !!otherUser && typingUserIds.includes(otherUser._id);
     if (otherUserIsTyping) {
       scrollToBottom();
     }
-  }, [otherUserIsTyping]);
+  }, [typingUserIds, otherUser, scrollToBottom]);
 
   return {
     selectedChat,
     messagesLoading,
     reversedMessages,
-    otherUserIsTyping,
+    otherUserIsTyping: !!otherUser && typingUserIds.includes(otherUser._id),
     hasNextMessagesPage,
     isFetchingNextMessagesPage,
     scrollRef,

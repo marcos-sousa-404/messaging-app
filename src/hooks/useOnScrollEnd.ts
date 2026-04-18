@@ -5,29 +5,21 @@ const useOnScrollEnd = (args: UseOnScrollEndArgs) => {
   const scrollRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
-    const scrollElement = scrollRef.current;
+    const el = scrollRef.current;
+    if (!el || disable) return;
 
-    const checkScrollEndReached = () => {
-      if (!scrollElement || disable) return;
+    const handleScroll = () => {
+      const isAtTop = direction === 'up' && el.scrollTop <= 50;
+      const isAtBottom =
+        direction === 'down' && el.scrollHeight - el.scrollTop - el.clientHeight <= 50;
 
-      const clientHeight = scrollElement.clientHeight;
-      const scrollTop = scrollElement.scrollTop;
-      const scrollHeight = scrollElement.scrollHeight;
-
-      const distance = direction === 'up' ? scrollTop : scrollHeight - clientHeight - scrollTop;
-
-      if (Math.abs(distance) < 150) onScrollEnd();
-    };
-
-    if (scrollElement) {
-      scrollElement.addEventListener('scroll', checkScrollEndReached);
-    }
-
-    return () => {
-      if (scrollElement) {
-        scrollElement.removeEventListener('scroll', checkScrollEndReached);
+      if (isAtTop || isAtBottom) {
+        onScrollEnd();
       }
     };
+
+    el.addEventListener('scroll', handleScroll, { passive: true });
+    return () => el.removeEventListener('scroll', handleScroll);
   }, [onScrollEnd, direction, disable]);
 
   return { scrollRef };
