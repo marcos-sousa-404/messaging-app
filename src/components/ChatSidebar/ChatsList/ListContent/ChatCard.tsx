@@ -1,3 +1,4 @@
+import type { ReactNode } from 'react';
 import {
   Avatar,
   Box,
@@ -32,11 +33,20 @@ const ChatCard = (props: ChatCardProps) => {
         <HStack spacing={4} align="center">
           <Avatar name={name} src={avatarUrl ?? ''} />
 
-          <VStack align="start" spacing={0} flex="1">
-            <Text fontWeight="bold">{name}</Text>
-            <Text fontSize="sm" color={messageColor} noOfLines={1}>
-              {lastMessage}
+          <VStack align="start" spacing={0} flex="1" overflow="hidden">
+            <Text fontWeight="bold" noOfLines={1} w="full">
+              {name}
             </Text>
+            <Box
+              fontSize="sm"
+              color={messageColor}
+              w="full"
+              whiteSpace="nowrap"
+              overflow="hidden"
+              textOverflow="ellipsis"
+            >
+              {lastMessage}
+            </Box>
           </VStack>
 
           {hasUnreadMessages && (
@@ -55,7 +65,7 @@ export default ChatCard;
 export interface ChatCardProps {
   name: string;
   avatarUrl?: string | null;
-  lastMessage: string;
+  lastMessage: ReactNode;
   hasUnreadMessages?: boolean;
   isSelected?: boolean;
   onClick?: () => void;

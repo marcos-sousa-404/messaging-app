@@ -9,12 +9,22 @@ type SendMessagePayload = {
   receiverId: string;
   conversationId: string;
   text: string;
+  file?: File;
 };
 
 const sendMessage = async (payload: SendMessagePayload) => {
   const api = getApi();
+  const formData = new FormData();
 
-  return api.post<ChatMessage>('/messages', payload);
+  formData.append('receiverId', payload.receiverId);
+  formData.append('conversationId', payload.conversationId);
+  formData.append('text', payload.text);
+
+  if (payload.file) {
+    formData.append('file', payload.file);
+  }
+
+  return api.post<ChatMessage>('/messages', formData);
 };
 
 const useSendMessageMutation = () => {

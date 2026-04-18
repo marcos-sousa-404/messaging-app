@@ -6,5 +6,8 @@ export interface ChatMessage extends TimestampedDatabaseEntity {
   conversationId: string | Chat;
   senderId: User;
   receiverId: User;
-  text: string;
+  text?: string;
+  fileUrl?: string;
+  fileType?: string;
+  fileName?: string;
 }

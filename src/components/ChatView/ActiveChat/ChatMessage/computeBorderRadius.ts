@@ -1,5 +1,5 @@
-const computeBorderRadius = (hasMessagesBefore: boolean, isSent: boolean) => {
-  const radius = {
+const computeBorderRadius = (hasMessagesBefore: boolean, isSent: boolean): BorderRadiusConfig => {
+  const radius: BorderRadiusConfig = {
     borderTopLeftRadius: 'xl',
     borderTopRightRadius: 'xl',
     borderBottomLeftRadius: 'xl',
@@ -24,3 +24,10 @@ const computeBorderRadius = (hasMessagesBefore: boolean, isSent: boolean) => {
 };
 
 export default computeBorderRadius;
+
+export interface BorderRadiusConfig {
+  borderTopLeftRadius: string;
+  borderTopRightRadius: string;
+  borderBottomLeftRadius: string;
+  borderBottomRightRadius: string;
+}

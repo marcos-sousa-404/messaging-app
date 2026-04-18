@@ -141,17 +141,17 @@ const useChat = () => {
     }
   };
 
-  const handleSendMessage = async () => {
+  const handleSendMessage = async (file?: File) => {
     if (!selectedChat || !otherUser) return;
 
     await sendMessage({
       conversationId: selectedChat._id,
       text: messageInputText,
       receiverId: otherUser._id,
+      file,
     });
 
     stopTyping();
-
     setMessageInputText('');
   };
 

@@ -1,5 +1,5 @@
 import { Box, Show, useColorModeValue } from '@chakra-ui/react';
-import ChatsList, { type ChatsListProps } from '../ChatsList';
+import ChatsList, { type ChatsListProps } from './ChatsList';
 import { useChatStore } from '@/store';
 import { memo } from 'react';
 

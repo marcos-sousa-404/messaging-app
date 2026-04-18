@@ -1,7 +1,7 @@
 import { Center, Spinner } from '@chakra-ui/react';
-import EmptyState from '@/components/ChatsList/ListContent/EmptyState.tsx';
-import UsersView from '@/components/ChatsList/ListContent/UsersView.tsx';
-import ChatsView from '@/components/ChatsList/ListContent/ChatsView.tsx';
+import EmptyState from './EmptyState.tsx';
+import UsersView from './UsersView.tsx';
+import ChatsView from './ChatsView.tsx';
 import type { Chat } from '@/types/Chat.ts';
 import type { UseChatOutput } from '@/pages/Chat/useChat.ts';
 

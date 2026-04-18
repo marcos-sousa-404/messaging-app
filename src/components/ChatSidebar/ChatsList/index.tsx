@@ -1,10 +1,10 @@
 import { Box, Divider } from '@chakra-ui/react';
 import type { Chat } from '@/types/Chat.ts';
-import ListContent from '@/components/ChatsList/ListContent';
+import ListContent from './ListContent';
 import { useAuthStore, useChatStore } from '@/store';
 import { type ChangeEvent, memo, useCallback } from 'react';
 import { type UseChatOutput } from '@/pages/Chat/useChat.ts';
-import ListHeader from '@/components/ChatsList/ListHeader';
+import ListHeader from './ListHeader';
 
 const ChatsList = memo(
   ({

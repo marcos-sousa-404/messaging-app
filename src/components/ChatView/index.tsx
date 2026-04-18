@@ -1,16 +1,14 @@
-import NoChatSelected from '@/components/ChatView/NoChatSelected.tsx';
-import ActiveChat from '@/components/ChatView/ActiveChat.tsx';
-import { Icon, Input, Stack, useBreakpointValue, useColorModeValue } from '@chakra-ui/react';
-import { FaPaperPlane } from 'react-icons/fa';
+import NoChatSelected from './NoChatSelected.tsx';
+import ActiveChat from './ActiveChat';
+import { Stack, useBreakpointValue, useColorModeValue } from '@chakra-ui/react';
 import type { ChangeEventHandler } from 'react';
-import Button from '@/components/Button';
 import { useChatStore } from '@/store';
+import ChatInput from './ChatInput';
 
 const ChatView = (props: ChatViewProps) => {
-  const { onMessageInputTextChange, messageInputText, handleSendMessage } = props;
+  const { onMessageInputTextChange, messageInputText, handleSendMessage, isSendingMessage } = props;
   const { selectedChat, chatsListOpen } = useChatStore();
   const backgroundColor = useColorModeValue('gray.100', 'gray.900');
-  const inputBackgroundColor = useColorModeValue('white', 'gray.800');
 
   const isMobile = useBreakpointValue({ base: true, md: false });
 
@@ -28,22 +26,12 @@ const ChatView = (props: ChatViewProps) => {
         marginX={'auto'}
         width={'calc(100% - 24px)'}
       >
-        <Input
-          bg={inputBackgroundColor}
-          placeholder={'Digite uma mensagem'}
-          alignSelf={'flex-end'}
-          value={messageInputText}
-          onChange={onMessageInputTextChange}
-          onKeyUp={(event) => {
-            if (event.key === 'Enter') {
-              event.preventDefault();
-              void handleSendMessage();
-            }
-          }}
+        <ChatInput
+          messageInputText={messageInputText}
+          onMessageInputTextChange={onMessageInputTextChange}
+          handleSendMessage={handleSendMessage}
+          isSendingMessage={isSendingMessage}
         />
-        <Button onClick={handleSendMessage} colorScheme={'brand'}>
-          <Icon as={FaPaperPlane} />
-        </Button>
       </Stack>
     </Stack>
   );
@@ -52,8 +40,8 @@ const ChatView = (props: ChatViewProps) => {
 export default ChatView;
 
 export interface ChatViewProps {
-  onMessageInputTextChange: ChangeEventHandler<HTMLInputElement, HTMLInputElement>;
+  onMessageInputTextChange: ChangeEventHandler<HTMLInputElement>;
   messageInputText: string;
-  handleSendMessage: () => Promise<void>;
+  handleSendMessage: (file?: File) => Promise<void>;
   isSendingMessage?: boolean;
 }
