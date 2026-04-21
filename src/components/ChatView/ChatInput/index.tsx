@@ -31,6 +31,7 @@ const ChatInput = ({
   const {
     selectedFile,
     fileInputRef,
+    textInputRef,
     handleFileChange,
     clearFile,
     onSend,
@@ -130,6 +131,7 @@ const ChatInput = ({
         </InputLeftElement>
 
         <Input
+          ref={textInputRef}
           bg={bg}
           placeholder="Digite uma mensagem"
           value={messageInputText}

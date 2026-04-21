@@ -9,10 +9,12 @@ export interface UseChatInputParams {
 const useChatInput = ({ messageInputText, handleSendMessage }: UseChatInputParams) => {
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const textInputRef = useRef<HTMLInputElement>(null);
 
   const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files.length > 0) {
       setSelectedFile(e.target.files[0]);
+      textInputRef.current?.focus();
     }
   };
 
@@ -25,8 +27,15 @@ const useChatInput = ({ messageInputText, handleSendMessage }: UseChatInputParam
 
   const onSend = async () => {
     if (!messageInputText.trim() && !selectedFile) return;
-    await handleSendMessage(selectedFile ?? undefined);
-    clearFile();
+
+    try {
+      await handleSendMessage(selectedFile ?? undefined);
+      clearFile();
+    } finally {
+      setTimeout(() => {
+        textInputRef.current?.focus();
+      }, 0);
+    }
   };
 
   const onKeyDown = (event: KeyboardEvent<HTMLInputElement>) => {
@@ -45,6 +54,7 @@ const useChatInput = ({ messageInputText, handleSendMessage }: UseChatInputParam
   return {
     selectedFile,
     fileInputRef,
+    textInputRef,
     handleFileChange,
     clearFile,
     onSend,
